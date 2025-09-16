@@ -1,4 +1,5 @@
 *.exe
 **/node_modules/
+**/dist/
 *.env
 **/pb_data/
