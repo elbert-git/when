@@ -1,0 +1,228 @@
+@import url("https://fonts.googleapis.com/css2?family=Kumbh+Sans:wght@100..900&display=swap");
+
+:root {
+    --red: rgb(255, 79, 79);
+    --blue: rgb(160, 193, 255);
+    --light-blue: rgb(192, 214, 255);
+}
+
+* {
+    font-family: "Kumbh Sans", sans-serif;
+    font-optical-sizing: auto;
+    font-style: normal;
+    font-variation-settings: "YOPQ" 300;
+}
+
+* {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+    scrollbar-width: 2px;
+}
+html {
+    height: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+body {
+    width: 100%;
+    max-width: 800px;
+}
+
+.debugRedLine {
+    outline: solid 3px rgba(255, 0, 0, 0.3);
+}
+
+/* sizing divs */
+.fillWidth {
+    width: 100%;
+}
+.fillHeight {
+    height: 100%;
+}
+.hugHeight {
+    height: fit-content;
+}
+.hugWidth {
+    width: fit-content;
+}
+
+/* spacings */
+.padding {
+    padding: 1em;
+}
+.paddingHalf {
+    padding: 0.5em;
+}
+.margin {
+    margin: 1em;
+}
+
+/* flex Classes */
+.flex {
+    display: flex;
+}
+.flexColumn {
+    flex-direction: column;
+}
+/* justify */
+.flexJustifyCenter {
+    justify-content: center;
+}
+.flexJustifyStart {
+    justify-content: flex-start;
+}
+.flexJustifyEnd {
+    justify-content: flex-end;
+}
+.flexJustifyBetween {
+    justify-content: space-between;
+}
+.flexJustifyAround {
+    justify-content: space-around;
+}
+.flexJustifyEvenly {
+    justify-content: space-evenly;
+}
+/* alignment */
+.flexAlignCenter {
+    align-items: center;
+}
+.flexAlignStart {
+    align-items: flex-start;
+}
+.flexAlignEnd {
+    align-items: flex-end;
+}
+.flexAlignStretch {
+    align-items: stretch;
+}
+.flexAlignBaseline {
+    align-items: baseline;
+}
+/* flex-grow */
+.flexGrow {
+    flex-grow: 1;
+}
+
+.interactive {
+    pointer-events: auto;
+    cursor: pointer;
+    transition: 0.3s;
+    transform: scale(1);
+}
+.interactive::hover {
+    transform: scale(1.1);
+}
+.interactive::active {
+    transform: scale(0.9);
+}
+
+/* event page */
+.root-event-route h1 {
+    font-weight: 800;
+    border-left: 3px var(--red) solid;
+    padding-left: 1rem;
+    margin: 0.5rem 0rem 1rem 0rem;
+}
+
+/* tooltip */
+.tooltip {
+    background-color: var(--light-blue);
+    border: 3px solid var(--blue);
+    border-radius: 0.5rem;
+    gap: 1rem;
+    padding: 1rem;
+}
+
+.button {
+    font-weight: 600;
+    padding: 1rem;
+    border-radius: 0.25rem;
+    border: none;
+    margin: 0.5rem 0rem;
+}
+
+/* ------------ table */
+table,
+th,
+td {
+    border: 0;
+}
+table {
+    border-collapse: collapse;
+}
+.availability-display {
+    width: 100%;
+    height: fit-content;
+    margin-top: 1rem;
+    overflow: auto;
+}
+
+/* header cells */
+.availability-display th {
+    border: solid 1px black;
+    background-color: white;
+    border: 0;
+}
+
+/* sticky header row */
+.availability-display thead {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+}
+
+/* stick the first column */
+.availability-display td:first-child {
+    position: sticky;
+    left: 0;
+    background-color: white;
+    text-transform: capitalize;
+}
+
+/* stick the top left column */
+.availability-display {
+    position: relative;
+}
+.availability-display th:first-child {
+    position: sticky;
+    left: 0;
+}
+
+/* styling the top row */
+.availability-display .date-cell {
+    padding: 0.1rem;
+    min-width: fit-content;
+}
+.availability-display .date-cell .day-name {
+    font-weight: 400;
+    font-size: 0.8rem;
+}
+.availability-display .date-cell .date {
+    font-weight: 700;
+    font-size: 1.2rem;
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+.availability-display .date-cell .time-slots {
+    white-space: nowrap;
+    font-size: 2.5rem;
+}
+
+.availability-display .checkbox-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: row;
+    gap: 15px;
+    padding: 4px 0rem;
+}
+
+.availability-display .name-cell {
+    background-color: white;
+    padding: 0.1rem;
+    text-align: right;
+    font-weight: 700;
+}

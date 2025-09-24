@@ -13,4 +13,13 @@ export default class Auth {
         const id = record.id;
         return id;
     }
+    static async verifyId(userId: string): Promise<Boolean> {
+        try {
+            const pb = await getPB();
+            const record = await pb!.collection("users").getOne(userId);
+            return true;
+        } catch (e) {
+            return false;
+        }
+    }
 }

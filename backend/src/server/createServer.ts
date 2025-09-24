@@ -2,6 +2,7 @@ import express from "express";
 import { NextFunction, Response, Request } from "express";
 import bodyParser from "body-parser";
 import Auth from "../auth";
+import userRoutes from "./routes/usersRoutes";
 
 export function errorHandlingMiddleware(
     err: any,
@@ -25,13 +26,15 @@ export default function createServer() {
         // get params
         const userName = req.body.username;
         // register with auth
-        console.log("username is", userName);
         const id = await Auth.register(userName);
         // respond with user id
         res.status(200).json({ userId: id });
     });
 
     // import in other routes
+    expressApp.use("/users", userRoutes);
+
+    // handle error middle wares
     expressApp.use(errorHandlingMiddleware);
 
     // return app
