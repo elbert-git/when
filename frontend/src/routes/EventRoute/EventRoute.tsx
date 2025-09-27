@@ -1,16 +1,9 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import Tooltip from "./subComponents/Tooltip";
 import { getDaysBetween, monthNumberToString } from "../../utilities";
 import DateCheckBox from "./subComponents/DateCheckBox";
-
-/*
----
-
->>> edit event page
-
-*/
-
+import API from "../../api";
 enum Dayslot {
     morning,
     afternoon,
@@ -27,12 +20,12 @@ interface Guests {
     availabilities: Array<Availability>;
 }
 
-interface EventData {
+export interface EventData {
     id: string;
     eventName: string;
     startDate: string;
     endDate: string;
-    guests: Array<Guests>;
+    guests: { all: Array<Guests> };
 }
 
 const tempData: EventData = {
@@ -40,12 +33,14 @@ const tempData: EventData = {
     eventName: "Some Long Event Name",
     startDate: "2025/09/01",
     endDate: "2025/12/04",
-    guests: [
-        { name: "alex", availabilities: [] },
-        { name: "baxter", availabilities: [] },
-        { name: "charlie", availabilities: [] },
-        { name: "denny", availabilities: [] },
-    ],
+    guests: {
+        all: [
+            { name: "alex", availabilities: [] },
+            { name: "baxter", availabilities: [] },
+            { name: "charlie", availabilities: [] },
+            { name: "denny", availabilities: [] },
+        ],
+    },
 };
 
 export function AvailabilityDisplay(props: { eventData: EventData }) {
@@ -64,7 +59,11 @@ export function AvailabilityDisplay(props: { eventData: EventData }) {
                                     <div className="date">
                                         {monthNumberToString(x.month)} {x.day}
                                     </div>
-                                    <div className="time-slots">🌅☀️🌉</div>
+                                    <div className="time-slots">
+                                        <div>6-11am</div>
+                                        <div>12-5pm</div>
+                                        <div>5-11pm</div>
+                                    </div>
                                 </th>
                             );
                         })}
@@ -72,7 +71,7 @@ export function AvailabilityDisplay(props: { eventData: EventData }) {
                 </thead>
                 <tbody>
                     {/* create 5 rows */}
-                    {eventData.guests.map((x, i) => {
+                    {eventData.guests.all.map((x, i) => {
                         return (
                             <tr key={i}>
                                 {/* create columns */}
@@ -98,14 +97,23 @@ export function AvailabilityDisplay(props: { eventData: EventData }) {
 }
 
 export default function EventRoute() {
-    const { eventId } = useParams<{ eventId: string }>();
-    const [eventData, setEventData] = useState(tempData);
-    console.log(eventId);
-    return (
+    // const { eventId } = useParams<{ eventId: string }>();
+    const eventId = "mjb5n7464ucnuwp";
+    // const [eventData, setEventData] = useState<EventData | null>(null);
+    const [eventData, setEventData] = useState<EventData | null>(tempData);
+    useEffect(() => {
+        const load = async () => {
+            const res = await API.getEventdata(eventId as string);
+            console.log(res);
+            setEventData(res);
+        };
+        load();
+    }, []);
+
+    return eventData ? (
         <main className="root-event-route">
             <p>When are you free for:</p>
             <h1>{eventData.eventName}</h1>
-            <button className="button fillWidth">Edit Members</button>
             <button className="button fillWidth">Event Settings</button>
             {/* todo most free display */}
             {/* tooltip */}
@@ -113,5 +121,7 @@ export default function EventRoute() {
             {/* table */}
             <AvailabilityDisplay eventData={eventData} />
         </main>
+    ) : (
+        "loading"
     );
 }

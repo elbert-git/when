@@ -1,11 +1,11 @@
 import React, { useState } from "react";
 
 const normalSize = "2.5rem";
-const smallSize = "1rem";
+const smallSize = "2rem";
 
 const containerStyle: React.CSSProperties = {
-    height: normalSize,
-    width: normalSize,
+    height: "2.5rem",
+    width: "4rem",
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
@@ -17,13 +17,18 @@ const containerStyle: React.CSSProperties = {
 export default function DateCheckBox() {
     const [checked, setChecked] = useState(false);
     const style: React.CSSProperties = {
-        height: checked ? normalSize : smallSize,
-        width: checked ? normalSize : smallSize,
+        height: "2.5rem",
+        width: "4rem",
         backgroundColor: checked
             ? "rgba(107, 255, 107, 1)"
             : "rgba(190, 190, 190, 1)",
-        transition: "0.3s",
+        transition: "0.2s",
         borderRadius: "3px",
+        transitionTimingFunction: "ease-in-out",
+        fontWeight: checked ? "900" : "300",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
     };
     return (
         <div
@@ -33,7 +38,7 @@ export default function DateCheckBox() {
                 setChecked(!checked);
             }}
         >
-            <div style={style}></div>
+            <div style={style}>AFT</div>
         </div>
     );
 }

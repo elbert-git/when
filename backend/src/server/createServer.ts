@@ -1,8 +1,10 @@
 import express from "express";
+import cors from "cors";
 import { NextFunction, Response, Request } from "express";
 import bodyParser from "body-parser";
 import Auth from "../auth";
 import userRoutes from "./routes/usersRoutes";
+import { getPB } from "../pb";
 
 export function errorHandlingMiddleware(
     err: any,
@@ -17,26 +19,20 @@ export function errorHandlingMiddleware(
 export default function createServer() {
     // create app
     const expressApp = express();
-
     // handle middleware
     expressApp.use(bodyParser.json());
-
-    // create public routes
-    expressApp.post("/registerUser", async (req, res) => {
-        // get params
-        const userName = req.body.username;
-        // register with auth
-        const id = await Auth.register(userName);
-        // respond with user id
-        res.status(200).json({ userId: id });
+    expressApp.use(cors());
+    // * --- get event
+    expressApp.get("/getEvent/:eventId", async (req, res) => {
+        // get param
+        const eventId = req.params.eventId;
+        // get data from db
+        const pb = await getPB();
+        const record = await pb!.collection("events").getOne(eventId, {});
+        res.status(200).json(record);
     });
-
-    // import in other routes
-    expressApp.use("/users", userRoutes);
-
     // handle error middle wares
     expressApp.use(errorHandlingMiddleware);
-
     // return app
     return expressApp;
 }

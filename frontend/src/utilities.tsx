@@ -32,18 +32,18 @@ export function getDaysBetween(
 
 export function monthNumberToString(num: number) {
     const mapping = [
-        "jan",
-        "feb",
-        "mar",
-        "apr",
+        "january",
+        "february",
+        "march",
+        "april",
         "may",
-        "jun",
-        "jul",
-        "aug",
-        "sep",
-        "oct",
-        "nov",
-        "dec",
+        "june",
+        "july",
+        "august",
+        "september",
+        "october",
+        "november",
+        "december",
     ];
     return mapping[num - 1];
 }

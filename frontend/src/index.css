@@ -1,11 +1,48 @@
 @import url("https://fonts.googleapis.com/css2?family=Kumbh+Sans:wght@100..900&display=swap");
 
+/* ------------------------------------------------------------------- vars */
 :root {
-    --red: rgb(255, 79, 79);
+    --red: #ff4f4f;
     --blue: rgb(160, 193, 255);
     --light-blue: rgb(192, 214, 255);
+    --light-grey: rgb(210, 220, 223);
+    --accent-green: #a6ff76;
+    /* font-size */
+    --font-size-h1: 3.815rem;
+    --font-size-h2: 3.502rem;
+    --font-size-h3: 2.441rem;
+    --font-size-h4: 1.953rem;
+    --font-size-h5: 1.563rem;
+    --font-size-h6: 1.25rem;
+    --font-size-small: 0.8rem;
+    --font-size-even-smaller: 0.64rem;
+}
+h1 {
+    font-size: 3.815;
+}
+h2 {
+    font-size: 3.502rem;
+}
+h3 {
+    font-size: 2.441rem;
+}
+h4 {
+    font-size: 1.953rem;
+}
+h5 {
+    font-size: 1.563rem;
+}
+h6 {
+    font-size: 1.25rem;
+}
+.font-small {
+    font-size: 0.8rem;
+}
+.font-even-smaller {
+    font-size: 0.64rem;
 }
 
+/* ------------------------------------------------------------------- defaults */
 * {
     font-family: "Kumbh Sans", sans-serif;
     font-optical-sizing: auto;
@@ -27,9 +64,10 @@ html {
 
 body {
     width: 100%;
-    max-width: 800px;
+    max-width: 750px;
 }
 
+/* ------------------------------------------------------------------- presets */
 .debugRedLine {
     outline: solid 3px rgba(255, 0, 0, 0.3);
 }
@@ -127,6 +165,8 @@ body {
     margin: 0.5rem 0rem 1rem 0rem;
 }
 
+/* ------------------------------------------------------------------- common components */
+
 /* tooltip */
 .tooltip {
     background-color: var(--light-blue);
@@ -144,7 +184,31 @@ body {
     margin: 0.5rem 0rem;
 }
 
-/* ------------ table */
+.red-header {
+    border-left: 5px solid var(--red);
+    padding-left: 1rem;
+    margin: 1rem 0rem;
+}
+
+.button-green {
+    background-color: var(--accent-green);
+    outline: none;
+    border: none;
+    padding: 1rem;
+    width: 100%;
+    font-size: var(--font-size-h6);
+    font-weight: 700;
+    text-transform: capitalize;
+    border-radius: 0.25rem;
+}
+.button-grey {
+    background-color: var(--light-grey);
+    outline: none;
+    border: none;
+    border-radius: 0.25rem;
+}
+
+/* ------------------------------------------------------------------- availability table */
 table,
 th,
 td {
@@ -208,7 +272,11 @@ table {
 }
 .availability-display .date-cell .time-slots {
     white-space: nowrap;
-    font-size: 2.5rem;
+    font-size: 0.8rem;
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+    font-weight: 400;
 }
 
 .availability-display .checkbox-container {
@@ -216,8 +284,9 @@ table {
     align-items: center;
     justify-content: center;
     flex-direction: row;
-    gap: 15px;
+    gap: 0.225rem;
     padding: 4px 0rem;
+    margin: 0rem 0.5rem;
 }
 
 .availability-display .name-cell {
@@ -225,4 +294,79 @@ table {
     padding: 0.1rem;
     text-align: right;
     font-weight: 700;
+    z-index: 2;
+}
+
+/* ------------------------------------------------------------------- editing page */
+.root-edit-event label div {
+    font-weight: 600px;
+}
+.root-edit-event input[type="text"] {
+    width: 100%;
+    padding: 4px 8px;
+    border-radius: 4px;
+    border: 1px solid var(--light-grey);
+    font-size: var(--font-size-h6);
+}
+.root-edit-event .form-section {
+    margin: 1rem 0rem;
+    /* background-color: red; */
+    height: auto;
+}
+.root-edit-event input[type="text"] {
+    margin: 0.25rem 0rem;
+}
+.root-edit-event .date-picker-container {
+    padding: 0.25rem 0rem;
+    gap: 1rem;
+}
+
+.root-edit-event .date-picker-container label {
+    width: 50%;
+}
+.root-edit-event input[type="date"] {
+    width: 100%;
+    border: 1px solid var(--light-grey);
+    font-size: var(--font-size-h6);
+    margin-top: 0.25rem;
+    padding: 4px 8px;
+}
+
+.root-edit-event .member-row {
+    display: flex;
+    font-size: var(--font-size-h6);
+    text-transform: capitalize;
+    gap: 0.5rem;
+    padding: 0.25rem 0rem;
+    align-items: center;
+}
+
+.root-edit-event .member-row {
+}
+
+.root-edit-event .member-row button {
+    padding: 0.25rem;
+    background-color: rgb(210, 220, 223);
+    outline: none;
+    border: none;
+    width: 2rem;
+    height: 2rem;
+    border-radius: 0.25rem;
+}
+
+.root-edit-event .member-row input {
+    width: auto;
+    flex-grow: 1;
+}
+
+.root-edit-event .add-member-button {
+    outline: none;
+    border: none;
+    padding: 1rem;
+    width: 100%;
+    font-size: var(--font-size-h6);
+    font-weight: 700;
+    text-transform: capitalize;
+    border-radius: 0.25rem;
+    margin: 0.5rem 0rem 1.5rem 0rem;
 }
