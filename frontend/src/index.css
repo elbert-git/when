@@ -301,20 +301,19 @@ table {
 .root-edit-event label div {
     font-weight: 600px;
 }
-.root-edit-event input[type="text"] {
+.root-edit-event input[type="text"],
+.root-edit-event input[type="password"] {
     width: 100%;
     padding: 4px 8px;
     border-radius: 4px;
     border: 1px solid var(--light-grey);
     font-size: var(--font-size-h6);
+    margin: 0.25rem 0rem;
 }
 .root-edit-event .form-section {
     margin: 1rem 0rem;
     /* background-color: red; */
     height: auto;
-}
-.root-edit-event input[type="text"] {
-    margin: 0.25rem 0rem;
 }
 .root-edit-event .date-picker-container {
     padding: 0.25rem 0rem;

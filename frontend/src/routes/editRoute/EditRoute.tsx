@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import API from "../../api";
-import { EventData } from "../EventRoute/EventRoute";
 import RedHeader from "../../commonComponents/RedHeader";
 import { ImCross } from "react-icons/im";
+import EventData from "../../EventData";
+import { useNavigate } from "react-router-dom";
 
 function MemberRow(props: { name: string }) {
     return (
@@ -21,29 +21,61 @@ function MemberRow(props: { name: string }) {
 }
 
 export default function EditRoute() {
+    const nav = useNavigate();
     const { eventId } = useParams<{ eventId: string }>();
     const [eventData, setEventData] = useState<EventData | null>(null);
     useEffect(() => {
         const load = async () => {
-            const res = await API.getEventdata(eventId as string);
-            console.log(res);
-            setEventData(res);
+            // pulling
+            const e = await EventData.pullFromApi(eventId as string);
+            // load to stat
+            setEventData(e);
         };
         load();
     }, []);
+
+    // callback
+    const onSaveButtonSubmitted = async (
+        e: React.FormEvent<HTMLFormElement>
+    ) => {
+        // prevent default
+        e.preventDefault();
+        // update event data
+        eventData!.eventName = (
+            document.getElementById("eventName") as HTMLInputElement
+        ).value;
+        eventData!.eventPassword = (
+            document.getElementById("eventPassword") as HTMLInputElement
+        ).value;
+        eventData!.startDate = (
+            document.getElementById("startDate") as HTMLInputElement
+        ).value;
+        eventData!.endDate = (
+            document.getElementById("endDate") as HTMLInputElement
+        ).value;
+        // write to database
+        await eventData!.writeToDatabase();
+        // route to event page
+        nav(`/event/${eventData!.id}`);
+    };
 
     return eventData ? (
         <div className="root-edit-event">
             <RedHeader>
                 <h1>Event Settings</h1>
             </RedHeader>
-            <form>
+            <form onSubmit={onSaveButtonSubmitted}>
                 {/* General settings */}
                 <h5>General Settings</h5>
                 {/* event name */}
                 <div className="form-section">
                     <h6>Event name</h6>
-                    <input type="text" defaultValue={eventData.eventName} />
+                    <input
+                        required
+                        type="text"
+                        defaultValue={eventData.eventName}
+                        id="eventName"
+                    />
                 </div>
                 {/* event password */}
                 <div className="form-section">
@@ -52,7 +84,11 @@ export default function EditRoute() {
                         <div style={{ width: "0.5rem" }}></div>
                         <div className="font-small">(optional)</div>
                     </div>
-                    <input type="text" defaultValue={eventData.eventName} />
+                    <input
+                        type="password"
+                        id="eventPassword"
+                        defaultValue={eventData.eventPassword}
+                    />
                 </div>
                 {/* date pickers */}
                 <div className="form-section">
@@ -66,16 +102,20 @@ export default function EditRoute() {
                                     /\//g,
                                     "-"
                                 )}
+                                required
+                                id="startDate"
                             />
                         </label>
                         <label className="flex flexColumn">
                             <div>End Date</div>
                             <input
+                                id="endDate"
                                 type="date"
                                 defaultValue={eventData.endDate.replace(
                                     /\//g,
                                     "-"
                                 )}
+                                required
                             />
                         </label>
                     </div>
@@ -85,7 +125,7 @@ export default function EditRoute() {
                 {eventData.guests.all.map((x, i) => {
                     return <MemberRow name={x.name} key={i} />;
                 })}
-                <button type="submit" className="button-grey add-member-button">
+                <button className="button-grey add-member-button">
                     Add Member
                 </button>
                 <button type="submit" className="button-green">

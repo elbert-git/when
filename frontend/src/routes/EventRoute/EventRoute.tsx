@@ -1,47 +1,10 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import Tooltip from "./subComponents/Tooltip";
 import { getDaysBetween, monthNumberToString } from "../../utilities";
 import DateCheckBox from "./subComponents/DateCheckBox";
 import API from "../../api";
-enum Dayslot {
-    morning,
-    afternoon,
-    night,
-}
-
-interface Availability {
-    date: string;
-    slot: Dayslot;
-}
-
-interface Guests {
-    name: string;
-    availabilities: Array<Availability>;
-}
-
-export interface EventData {
-    id: string;
-    eventName: string;
-    startDate: string;
-    endDate: string;
-    guests: { all: Array<Guests> };
-}
-
-const tempData: EventData = {
-    id: "asdff",
-    eventName: "Some Long Event Name",
-    startDate: "2025/09/01",
-    endDate: "2025/12/04",
-    guests: {
-        all: [
-            { name: "alex", availabilities: [] },
-            { name: "baxter", availabilities: [] },
-            { name: "charlie", availabilities: [] },
-            { name: "denny", availabilities: [] },
-        ],
-    },
-};
+import EventData, { Guest, tempData } from "../../EventData";
 
 export function AvailabilityDisplay(props: { eventData: EventData }) {
     const eventData = props.eventData;
@@ -97,15 +60,16 @@ export function AvailabilityDisplay(props: { eventData: EventData }) {
 }
 
 export default function EventRoute() {
-    // const { eventId } = useParams<{ eventId: string }>();
-    const eventId = "mjb5n7464ucnuwp";
-    // const [eventData, setEventData] = useState<EventData | null>(null);
-    const [eventData, setEventData] = useState<EventData | null>(tempData);
+    // references
+    const { eventId } = useParams<{ eventId: string }>();
+    const nav = useNavigate();
+    const [eventData, setEventData] = useState<EventData | null>();
+
+    // on load
     useEffect(() => {
         const load = async () => {
-            const res = await API.getEventdata(eventId as string);
-            console.log(res);
-            setEventData(res);
+            const eventData = await EventData.pullFromApi(eventId!);
+            setEventData(eventData);
         };
         load();
     }, []);
@@ -114,7 +78,14 @@ export default function EventRoute() {
         <main className="root-event-route">
             <p>When are you free for:</p>
             <h1>{eventData.eventName}</h1>
-            <button className="button fillWidth">Event Settings</button>
+            <button
+                className="button fillWidth"
+                onClick={() => {
+                    nav(`/edit/${eventId!}`);
+                }}
+            >
+                Event Settings
+            </button>
             {/* todo most free display */}
             {/* tooltip */}
             <Tooltip>Add your name and mark when you are available</Tooltip>
