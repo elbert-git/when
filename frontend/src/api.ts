@@ -3,7 +3,6 @@ import Keychain from "./keychain";
 export default class API {
     static url = "http://localhost:3000";
     static async getEventdata(eventId: string) {
-        console.log("getting auth", Keychain.getToken(eventId));
         const res = await fetch(`${API.url}/getEvent/${eventId}`, {
             headers: {
                 Authorization: `Bearer ${Keychain.getToken(eventId)}`,

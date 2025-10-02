@@ -4,6 +4,8 @@ import RedHeader from "../../commonComponents/RedHeader";
 import { ImCross } from "react-icons/im";
 import EventData from "../../EventData";
 import { useNavigate } from "react-router-dom";
+import ErrorLabel from "../../commonComponents/ErrorLabel";
+import { isDateTodayOrFuture, isEndDateWithinTwoWeeks } from "../../utilities";
 
 function MemberRow(props: { name: string }) {
     return (
@@ -24,6 +26,7 @@ export default function EditRoute() {
     const nav = useNavigate();
     const { eventId } = useParams<{ eventId: string }>();
     const [eventData, setEventData] = useState<EventData | null>(null);
+    const [dateError, setDateError] = useState("");
     useEffect(() => {
         const load = async () => {
             const eventData = await EventData.pullFromApi(eventId!);
@@ -42,25 +45,46 @@ export default function EditRoute() {
     ) => {
         // prevent default
         e.preventDefault();
-        // update event data
-        eventData!.eventName = (
-            document.getElementById("eventName") as HTMLInputElement
-        ).value;
-        eventData!.eventPassword = (
-            document.getElementById("eventPassword") as HTMLInputElement
-        ).value;
-        eventData!.startDate = (
+        if (dateError === "") {
+            // update event data
+            eventData!.eventName = (
+                document.getElementById("eventName") as HTMLInputElement
+            ).value;
+            eventData!.eventPassword = (
+                document.getElementById("eventPassword") as HTMLInputElement
+            ).value;
+            eventData!.startDate = (
+                document.getElementById("startDate") as HTMLInputElement
+            ).value;
+            eventData!.endDate = (
+                document.getElementById("endDate") as HTMLInputElement
+            ).value;
+            // write to database
+            await eventData!.writeToDatabase();
+            // route to event page
+            nav(`/event/${eventData!.id}`);
+        }
+    };
+
+    const onDatesChanged = () => {
+        // get elements
+        const startDate = (
             document.getElementById("startDate") as HTMLInputElement
         ).value;
-        eventData!.endDate = (
-            document.getElementById("endDate") as HTMLInputElement
-        ).value;
-        // write to database
-        console.log("start write");
-        await eventData!.writeToDatabase();
-        // route to event page
-        console.log("start nav");
-        nav(`/event/${eventData!.id}`);
+        const endDate = (document.getElementById("endDate") as HTMLInputElement)
+            .value;
+        // -- maybe we should check fi start date is different?
+        // verify start date is today or after
+        // if(isDateTodayOrFuture(startDate) == false){
+        //     setDateError("Start date must be today or later")
+        //     return null
+        // }
+        // verify end date is within 2 weeks of today
+        if (isEndDateWithinTwoWeeks(startDate, endDate) == false) {
+            setDateError("End date must be within 2 weeks of start date");
+            return null;
+        }
+        setDateError("");
     };
 
     return eventData ? (
@@ -111,6 +135,7 @@ export default function EditRoute() {
                                 required
                                 className="text-input"
                                 id="startDate"
+                                onChange={onDatesChanged}
                             />
                         </label>
                         <label className="flex flexColumn">
@@ -124,9 +149,11 @@ export default function EditRoute() {
                                 )}
                                 className="text-input"
                                 required
+                                onChange={onDatesChanged}
                             />
                         </label>
                     </div>
+                    <ErrorLabel message={dateError} />
                 </div>
                 {/* Members */}
                 <h5>Members</h5>

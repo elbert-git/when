@@ -87,7 +87,6 @@ export default function createServer() {
                     const record = await pb!
                         .collection("active_tokens")
                         .getFirstListItem(`event_id = "${req.body.id}"`, {});
-                    // todo need to check if can delete
                     await pb!.collection("active_tokens").delete(record.id);
                 } catch (e) {
                     console.log(
@@ -159,7 +158,6 @@ export default function createServer() {
         const pb = await getPB();
         const record = await pb!.collection("events").getOne(eventId);
         // test match
-        // todo i dont like this public string match
         const match = password === record.event_password;
         if (match) {
             // if jwt exists in db else create it

@@ -27,7 +27,6 @@ export default class Keychain {
         }
     }
     static writeCache() {
-        console.log("writing cache", Keychain.cache);
         const jsonString = JSON.stringify(Keychain.cache);
         localStorage.setItem(Keychain.key, jsonString);
     }

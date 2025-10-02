@@ -47,3 +47,38 @@ export function monthNumberToString(num: number) {
     ];
     return mapping[num - 1];
 }
+
+export function isDateTodayOrFuture(dateString: string): boolean {
+    const inputDate = new Date(dateString);
+    const today = new Date();
+
+    // Normalize both dates to the start of the day to compare only the date part
+    inputDate.setHours(0, 0, 0, 0);
+    today.setHours(0, 0, 0, 0);
+
+    return inputDate.getTime() >= today.getTime();
+}
+
+export function isEndDateWithinTwoWeeks(
+    startDateString: string,
+    endDateString: string
+): boolean {
+    const startDate = new Date(startDateString);
+    const endDate = new Date(endDateString);
+
+    // Normalize dates to the start of the day for accurate day comparison
+    startDate.setHours(0, 0, 0, 0);
+    endDate.setHours(0, 0, 0, 0);
+
+    const oneDayInMilliseconds = 24 * 60 * 60 * 1000;
+    const fourteenDaysInMilliseconds = 14 * oneDayInMilliseconds;
+
+    const difference = endDate.getTime() - startDate.getTime();
+
+    // Condition 1: endDate must be in the future relative to startDate (at least 1 day later)
+    // Condition 2: The difference must be between 1 and 14 days (inclusive)
+    return (
+        difference >= oneDayInMilliseconds &&
+        difference <= fourteenDaysInMilliseconds
+    );
+}
