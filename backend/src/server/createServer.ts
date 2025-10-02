@@ -33,8 +33,7 @@ const authMiddleware = async (
             .getFirstListItem(`event_id = "${eventId}"`, {});
     } catch (e) {
         console.log(
-            "failed to get active token record; Probably does not exist",
-            "event id:"
+            "failed to get active token record; Probably does not exist"
         );
     }
     // check if there is an active token to check against
@@ -43,9 +42,14 @@ const authMiddleware = async (
     } else {
         // get the auth token
         const incomingToken = req.headers.authorization!.split(" ")[1];
-        console.log("incoming token", incomingToken);
         try {
+            // attempt to decode jwt
             const decoded = jwt.verify(incomingToken, config.secret);
+            // check if is active token
+            const isActive = incomingToken == activeTokenRecord.token;
+            if (isActive == false) {
+                throw "Token is inactive";
+            }
             next(); // let it go throguuh, verification success
         } catch (e) {
             res.status(403).json({ error: "token verification failed" });
@@ -78,33 +82,28 @@ export default function createServer() {
             const changedPassword =
                 prev.event_password != req.body.eventPassword;
             if (changedPassword) {
-                // if the password is blank... remove active jwt
-                if (req.body.eventPassword === "") {
-                    // try to delete it
-                    try {
-                        // you can also fetch all records at once via getFullList
-                        const record = await pb!
-                            .collection("active_tokens")
-                            .getFirstListItem(`event_id != ${req.body.id}`, {});
-                        // todo need to check if can delet
-                        await pb!.collection("active_tokens").delete(record.id);
-                    } catch (e) {
-                        console.log(
-                            "failed to delete active token. most like token doesnt exist"
-                        );
-                    }
+                // on password change:  delete previous record if it exists
+                try {
+                    const record = await pb!
+                        .collection("active_tokens")
+                        .getFirstListItem(`event_id = "${req.body.id}"`, {});
+                    // todo need to check if can delete
+                    await pb!.collection("active_tokens").delete(record.id);
+                } catch (e) {
+                    console.log(
+                        "failed to delete active token. most like token doesnt exist"
+                    );
                 }
-                // if it's not then create a new jwt
-                else {
+                // if new password is not blank... then create a new active token and save it
+                if (req.body.eventPassword != "") {
                     const accessToken = jwt.sign(
-                        { eventId: req.body.event_id },
+                        { eventId: req.body.event_id, timestamp: Date.now() },
                         config.secret
                     );
                     const data = {
                         token: accessToken,
                         event_id: req.body.id,
                     };
-                    console.log(data);
                     const record = await pb!
                         .collection("active_tokens")
                         .create(data);

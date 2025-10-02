@@ -5,10 +5,10 @@ export default class Keychain {
     static key = "when-local-key";
     static cache: KeychainCache = {};
     static init() {
-        // load
         const raw = localStorage.getItem(Keychain.key);
-        if (raw === "" || raw == undefined || raw == null) {
-            // empty local storage
+        try {
+            Keychain.cache = JSON.parse(raw as string);
+        } catch {
             // create one
             Keychain.cache = {};
             // save cache
