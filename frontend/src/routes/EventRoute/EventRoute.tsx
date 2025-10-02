@@ -69,7 +69,11 @@ export default function EventRoute() {
     useEffect(() => {
         const load = async () => {
             const eventData = await EventData.pullFromApi(eventId!);
-            setEventData(eventData);
+            if (eventData) {
+                setEventData(eventData as EventData);
+            } else {
+                nav(`/password/${eventId}`);
+            }
         };
         load();
     }, []);

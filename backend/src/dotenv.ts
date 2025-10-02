@@ -6,6 +6,7 @@ const configs = {
     pocketBaseUrl: process.env.POCKETBASE_URL as string,
     pocketBaseEmail: process.env.POCKETBASE_ADMIN_EMAIL as string,
     pocketBasePassword: process.env.POCKETBASE_ADMIN_PASSWORD as string,
+    secret: process.env.SECRET as string,
 };
 
 export default configs;

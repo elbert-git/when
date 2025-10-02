@@ -48,17 +48,22 @@ export default class EventData {
         this.guests = apiResponseObject["guests"];
     }
     static async pullFromApi(id: string) {
-        const res = await API.getEventdata(id);
-        console.log("from api", res);
-        const data = new EventData(res);
-        return data;
+        try {
+            const res = await API.getEventdata(id);
+            const data = new EventData(res);
+            return data;
+        } catch (e) {
+            console.log("event data pull failed, most likely forbidden");
+            console.log(e);
+            return false;
+        }
     }
     static ingestFromObject(o: { [index: string]: any }) {
         const data = new EventData(o);
         return data as EventData;
     }
     async writeToDatabase() {
-        API.updateEventDate(this.toJson());
+        await API.updateEventDate(this.toJson());
     }
     toJson() {
         return {

@@ -6,7 +6,7 @@ let pocketBase: PocketBase | null = null;
 
 async function initiatePocketBase() {
     // get database
-    console.log(`connecting to pb url: ${configs.pocketBaseUrl}`);
+    // console.log(`connecting to pb url: ${configs.pocketBaseUrl}`);
     const pb = new PocketBase(configs.pocketBaseUrl);
     // authenticate session
     await pb

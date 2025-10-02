@@ -3,6 +3,7 @@
 /* ------------------------------------------------------------------- vars */
 :root {
     --red: #ff4f4f;
+    --light-red: #ffa7a7;
     --blue: rgb(160, 193, 255);
     --light-blue: rgb(192, 214, 255);
     --light-grey: rgb(210, 220, 223);
@@ -208,6 +209,13 @@ body {
     border-radius: 0.25rem;
 }
 
+.error-label {
+    background-color: var(--light-red);
+    border: solid 1px var(--red);
+    border-radius: 0.25rem;
+    transition: 0.3s;
+}
+
 /* ------------------------------------------------------------------- availability table */
 table,
 th,
@@ -301,8 +309,7 @@ table {
 .root-edit-event label div {
     font-weight: 600px;
 }
-.root-edit-event input[type="text"],
-.root-edit-event input[type="password"] {
+.text-input {
     width: 100%;
     padding: 4px 8px;
     border-radius: 4px;
@@ -368,4 +375,9 @@ table {
     text-transform: capitalize;
     border-radius: 0.25rem;
     margin: 0.5rem 0rem 1.5rem 0rem;
+}
+
+/* ------------------------------------------------------------------- password page */
+.root-password-route .button-green {
+    margin-top: 1rem;
 }

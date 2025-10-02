@@ -1,13 +1,24 @@
+import Keychain from "./keychain";
+
 export default class API {
     static url = "http://localhost:3000";
     static async getEventdata(eventId: string) {
-        const res = await fetch(`${API.url}/getEvent/${eventId}`);
+        console.log("getting auth", Keychain.getToken(eventId));
+        const res = await fetch(`${API.url}/getEvent/${eventId}`, {
+            headers: {
+                Authorization: `Bearer ${Keychain.getToken(eventId)}`,
+            },
+        });
+        if (res.status === 403) {
+            throw "forbidden error";
+        }
         return await res.json();
     }
-    static async updateEventDate(data: Object) {
-        const res = await fetch(`${API.url}/updateEvent`, {
+    static async updateEventDate(data: any) {
+        const res = await fetch(`${API.url}/updateEvent/${data.id}`, {
             method: "POST",
             headers: {
+                Authorization: `Bearer ${Keychain.getToken(data.id)}`,
                 "Content-Type": "application/json",
             },
             body: JSON.stringify(data),
@@ -21,5 +32,24 @@ export default class API {
         const res = await fetch(`${API.url}/getEventName/${eventId}`);
         const resJson = await res.json();
         return await resJson.name;
+    }
+    static async verifyPassword(eventId: string, password: string) {
+        console.log("start password verification");
+        const res = await fetch(`${API.url}/verifyPassword`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                eventId,
+                password,
+            }),
+        });
+        const resJson = await res.json();
+        console.log(resJson);
+        if (res.status === 200) {
+            Keychain.registerToken(eventId, resJson.token);
+        }
+        return res.status === 200;
     }
 }

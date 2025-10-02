@@ -26,10 +26,12 @@ export default function EditRoute() {
     const [eventData, setEventData] = useState<EventData | null>(null);
     useEffect(() => {
         const load = async () => {
-            // pulling
-            const e = await EventData.pullFromApi(eventId as string);
-            // load to stat
-            setEventData(e);
+            const eventData = await EventData.pullFromApi(eventId!);
+            if (eventData) {
+                setEventData(eventData as EventData);
+            } else {
+                nav(`/password/${eventId}`);
+            }
         };
         load();
     }, []);
@@ -54,8 +56,10 @@ export default function EditRoute() {
             document.getElementById("endDate") as HTMLInputElement
         ).value;
         // write to database
+        console.log("start write");
         await eventData!.writeToDatabase();
         // route to event page
+        console.log("start nav");
         nav(`/event/${eventData!.id}`);
     };
 
@@ -74,6 +78,7 @@ export default function EditRoute() {
                         required
                         type="text"
                         defaultValue={eventData.eventName}
+                        className="text-input"
                         id="eventName"
                     />
                 </div>
@@ -87,6 +92,7 @@ export default function EditRoute() {
                     <input
                         type="password"
                         id="eventPassword"
+                        className="text-input"
                         defaultValue={eventData.eventPassword}
                     />
                 </div>
@@ -103,6 +109,7 @@ export default function EditRoute() {
                                     "-"
                                 )}
                                 required
+                                className="text-input"
                                 id="startDate"
                             />
                         </label>
@@ -115,6 +122,7 @@ export default function EditRoute() {
                                     /\//g,
                                     "-"
                                 )}
+                                className="text-input"
                                 required
                             />
                         </label>
