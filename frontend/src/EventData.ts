@@ -75,4 +75,14 @@ export default class EventData {
             id: this.id,
         };
     }
+    createCopy() {
+        return new EventData({
+            id: this.id,
+            event_name: this.eventName,
+            event_password: this.eventPassword,
+            start_date: this.startDate,
+            end_date: this.endDate,
+            guests: { ...this.guests },
+        });
+    }
 }

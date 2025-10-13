@@ -7,15 +7,29 @@ import { useNavigate } from "react-router-dom";
 import ErrorLabel from "../../commonComponents/ErrorLabel";
 import { isDateTodayOrFuture, isEndDateWithinTwoWeeks } from "../../utilities";
 
-function MemberRow(props: { name: string }) {
+function MemberRow(props: {
+    name: string;
+    deleteFunction: Function;
+    nameChangeFunc: Function;
+    index: number;
+}) {
     return (
         <div className="member-row">
             <input
                 type="text"
                 placeholder="Enter name"
                 defaultValue={props.name}
+                className="text-input"
+                onChange={(e) => {
+                    props.nameChangeFunc(e, props.index, e.target.value);
+                }}
             />
-            <button className="">
+            <button
+                className=""
+                onClick={(e) => {
+                    props.deleteFunction(e, props.index);
+                }}
+            >
                 <ImCross color="#ff4f4f" size={"1rem"} />
             </button>
         </div>
@@ -27,6 +41,7 @@ export default function EditRoute() {
     const { eventId } = useParams<{ eventId: string }>();
     const [eventData, setEventData] = useState<EventData | null>(null);
     const [dateError, setDateError] = useState("");
+    const [nameErrorLabel, setNameErrorLabel] = useState("");
     useEffect(() => {
         const load = async () => {
             const eventData = await EventData.pullFromApi(eventId!);
@@ -59,11 +74,51 @@ export default function EditRoute() {
             eventData!.endDate = (
                 document.getElementById("endDate") as HTMLInputElement
             ).value;
+            // prevent empty names
+            const members = eventData!.guests.all;
+            for (let index = 0; index < members.length; index++) {
+                const element = members[index];
+                if (element.name.length < 1) {
+                    setNameErrorLabel("Names can't be blank");
+                    return;
+                }
+            }
             // write to database
             await eventData!.writeToDatabase();
             // route to event page
             nav(`/event/${eventData!.id}`);
         }
+    };
+
+    const onAddGuestButtonPressed = (e: any) => {
+        e.preventDefault();
+        // copy state
+        const newEventData = eventData!.createCopy();
+        // edit
+        newEventData!.guests.all.push({ name: "", availabilities: [] });
+        // set state
+        setEventData(newEventData);
+    };
+
+    const onDeleteMemberButtonPressed = (e: any, index: number) => {
+        e.preventDefault();
+        // copy event
+        const newEventData = eventData!.createCopy();
+        // remove by index
+        newEventData.guests.all = newEventData.guests.all.filter((e, i) => {
+            return i != index;
+        });
+        // set new state
+        setEventData(newEventData);
+    };
+
+    const onNameChanged = (e: any, index: number, name: string) => {
+        e.preventDefault();
+        // copy event
+        const newEventData = eventData!.createCopy();
+        // edit event
+        newEventData.guests.all[index].name = name;
+        // note no need to set state
     };
 
     const onDatesChanged = () => {
@@ -158,9 +213,21 @@ export default function EditRoute() {
                 {/* Members */}
                 <h5>Members</h5>
                 {eventData.guests.all.map((x, i) => {
-                    return <MemberRow name={x.name} key={i} />;
+                    return (
+                        <MemberRow
+                            name={x.name}
+                            key={i}
+                            nameChangeFunc={onNameChanged}
+                            deleteFunction={onDeleteMemberButtonPressed}
+                            index={i}
+                        />
+                    );
                 })}
-                <button className="button-grey add-member-button">
+                <ErrorLabel message={nameErrorLabel} />
+                <button
+                    onClick={onAddGuestButtonPressed}
+                    className="button-grey add-member-button"
+                >
                     Add Member
                 </button>
                 <button type="submit" className="button-green">
