@@ -6,7 +6,10 @@ import DateCheckBox from "./subComponents/DateCheckBox";
 import API from "../../api";
 import EventData, { Guest, tempData } from "../../EventData";
 
-export function AvailabilityDisplay(props: { eventData: EventData }) {
+export function AvailabilityDisplay(props: {
+    eventData: EventData;
+    onAvailabilitiesUpdate: Function;
+}) {
     const eventData = props.eventData;
     const diffDays = getDaysBetween(eventData.startDate, eventData.endDate);
     return (
@@ -34,18 +37,52 @@ export function AvailabilityDisplay(props: { eventData: EventData }) {
                 </thead>
                 <tbody>
                     {/* create 5 rows */}
-                    {eventData.guests.all.map((x, i) => {
+                    {eventData.guests.all.map((x, memberIndex) => {
                         return (
-                            <tr key={i}>
+                            <tr key={memberIndex}>
                                 {/* create columns */}
                                 <td className="name-cell">{x.name}</td>
                                 {diffDays.map((x, i) => {
+                                    const existingTimeslots =
+                                        eventData.guests.all[memberIndex]
+                                            .availabilities;
+                                    const currentDate = `${x.year}-${x.month}-${x.day}`;
                                     return (
                                         <td key={i} className="">
                                             <div className="checkbox-container">
-                                                <DateCheckBox></DateCheckBox>
-                                                <DateCheckBox></DateCheckBox>
-                                                <DateCheckBox></DateCheckBox>
+                                                <DateCheckBox
+                                                    memberIndex={memberIndex}
+                                                    checked={existingTimeslots.includes(
+                                                        `${currentDate}-${0}`
+                                                    )}
+                                                    date={currentDate}
+                                                    timeslot={0}
+                                                    onAvailabilitiesUpdate={
+                                                        props.onAvailabilitiesUpdate
+                                                    }
+                                                ></DateCheckBox>
+                                                <DateCheckBox
+                                                    memberIndex={memberIndex}
+                                                    checked={existingTimeslots.includes(
+                                                        `${currentDate}-${1}`
+                                                    )}
+                                                    date={currentDate}
+                                                    onAvailabilitiesUpdate={
+                                                        props.onAvailabilitiesUpdate
+                                                    }
+                                                    timeslot={1}
+                                                ></DateCheckBox>
+                                                <DateCheckBox
+                                                    memberIndex={memberIndex}
+                                                    checked={existingTimeslots.includes(
+                                                        `${currentDate}-${2}`
+                                                    )}
+                                                    date={currentDate}
+                                                    onAvailabilitiesUpdate={
+                                                        props.onAvailabilitiesUpdate
+                                                    }
+                                                    timeslot={2}
+                                                ></DateCheckBox>
                                             </div>
                                         </td>
                                     );
@@ -78,6 +115,46 @@ export default function EventRoute() {
         load();
     }, []);
 
+    // update availabilities
+    const onUpdateAvailabilities = async (
+        memberIndex: number,
+        timeslot: string,
+        add: boolean
+    ) => {
+        setEventData((prev) => {
+            // copy state
+            const newState = prev!.createCopy();
+
+            // first check if adding or not
+            if (add) {
+                // only add if timeslot doesnt exist
+                if (
+                    newState.guests.all[memberIndex].availabilities.includes(
+                        timeslot
+                    ) === false
+                ) {
+                    // add availabilities
+                    newState.guests.all[memberIndex].availabilities.push(
+                        timeslot
+                    );
+                    // write to database
+                    newState.writeToDatabase();
+                }
+            } else {
+                // removing
+                newState.guests.all[memberIndex].availabilities =
+                    newState.guests.all[memberIndex].availabilities.filter(
+                        (s) => {
+                            return s !== timeslot;
+                        }
+                    );
+            }
+
+            // return to update stae
+            return newState;
+        });
+    };
+
     return eventData ? (
         <main className="root-event-route">
             <p>When are you free for:</p>
@@ -94,7 +171,10 @@ export default function EventRoute() {
             {/* tooltip */}
             <Tooltip>Add your name and mark when you are available</Tooltip>
             {/* table */}
-            <AvailabilityDisplay eventData={eventData} />
+            <AvailabilityDisplay
+                eventData={eventData}
+                onAvailabilitiesUpdate={onUpdateAvailabilities}
+            />
         </main>
     ) : (
         "loading"

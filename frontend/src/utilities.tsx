@@ -8,23 +8,29 @@ export function dateToString(date: Date) {
 export function getDaysBetween(
     a: string,
     b: string
-): { month: number; day: number; dayName: string }[] {
+): { month: number; day: number; year: number; dayName: string }[] {
     const dateA = new Date(a);
     const dateB = new Date(b);
 
     const startDate = new Date(Math.min(dateA.getTime(), dateB.getTime()));
     const endDate = new Date(Math.max(dateA.getTime(), dateB.getTime()));
 
-    const result: { month: number; day: number; dayName: string }[] = [];
+    const result: {
+        month: number;
+        day: number;
+        year: number;
+        dayName: string;
+    }[] = [];
     let currentDate = startDate;
 
     while (currentDate <= endDate) {
         const month = currentDate.getMonth() + 1;
         const day = currentDate.getDate();
+        const year = currentDate.getFullYear();
         const dayName = currentDate.toLocaleString("en-US", {
             weekday: "long",
         });
-        result.push({ month, day, dayName });
+        result.push({ month, day, year, dayName });
         currentDate.setDate(currentDate.getDate() + 1); // Increment day
     }
     return result;

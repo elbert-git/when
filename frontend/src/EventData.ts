@@ -6,14 +6,9 @@ export enum Dayslot {
     night,
 }
 
-export interface Availability {
-    date: string;
-    slot: Dayslot;
-}
-
 export interface Guest {
     name: string;
-    availabilities: Array<Availability>;
+    availabilities: Array<string>;
 }
 
 // purely temporary

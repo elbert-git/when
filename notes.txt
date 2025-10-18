@@ -1,0 +1,8 @@
+
+>>> the availabilities feature.
+    > planning
+    > writing
+        on click, please use function to update state
+            add a string encoding to the state. 
+            dont await: update the state and write to database
+            
