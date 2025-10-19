@@ -1,10 +1,15 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import Tooltip from "./subComponents/Tooltip";
-import { getDaysBetween, monthNumberToString } from "../../utilities";
+import {
+    formatDateToReadable,
+    getDaysBetween,
+    monthNumberToString,
+} from "../../utilities";
 import DateCheckBox from "./subComponents/DateCheckBox";
 import API from "../../api";
 import EventData, { Guest, tempData } from "../../EventData";
+import { DateIcon } from "../../commonComponents/DateIcon";
 
 export function AvailabilityDisplay(props: {
     eventData: EventData;
@@ -96,6 +101,82 @@ export function AvailabilityDisplay(props: {
     );
 }
 
+function MostFreeDateDisplay(props: { eventData: EventData }) {
+    // prepare event data
+    const eventData = props.eventData;
+    const daysInBetween = getDaysBetween(
+        props.eventData.startDate,
+        props.eventData.endDate
+    );
+    const allTimeslots: Array<any> = [];
+    daysInBetween.forEach((e) => {
+        allTimeslots.push({
+            timeslot: `${e.year}-${e.month}-${e.day}-0`,
+            count: 0,
+            date: e,
+        });
+        allTimeslots.push({
+            timeslot: `${e.year}-${e.month}-${e.day}-1`,
+            count: 0,
+            date: e,
+        });
+        allTimeslots.push({
+            timeslot: `${e.year}-${e.month}-${e.day}-2`,
+            count: 0,
+            date: e,
+        });
+    });
+    // calculate how many are free in the days
+    let mostFreeDay: any = allTimeslots[0];
+    for (let index = 0; index < allTimeslots.length; index++) {
+        const currentSlot = allTimeslots[index];
+        eventData.guests.all.forEach((guest) => {
+            if (guest.availabilities.includes(currentSlot.timeslot)) {
+                currentSlot.count += 1;
+            }
+        });
+    }
+    for (let index = 0; index < allTimeslots.length; index++) {
+        const currentSlot = allTimeslots[index];
+        if (currentSlot.count > mostFreeDay.count) {
+            mostFreeDay = currentSlot;
+        }
+    }
+    const everyoneIsFree = mostFreeDay.count >= eventData.guests.all.length;
+    const readableDate = formatDateToReadable(
+        `${mostFreeDay.date.year}-${mostFreeDay.date.month}-${mostFreeDay.date.day}`
+    );
+
+    // handling timeslot message
+    const timeslotToSentence = [
+        "in the morning.",
+        "in the afternoon period.",
+        "at evening or nightime.",
+    ];
+    const timeslotIndex = Number(
+        mostFreeDay.timeslot[mostFreeDay.timeslot.length - 1]
+    );
+    return (
+        <div className="most-free-display">
+            {/* date icon */}
+            <DateIcon
+                month={mostFreeDay.date.month}
+                day={mostFreeDay.date.day}
+                dayname={mostFreeDay.date.dayName}
+            />
+            <div className="col-2">
+                <div className="header">Most Free Date: {readableDate}</div>
+                <div className="body">
+                    {everyoneIsFree
+                        ? "Everyone is free"
+                        : "Most people are free"}
+                    {" " + timeslotToSentence[timeslotIndex]}
+                </div>
+            </div>
+        </div>
+    );
+}
+
 export default function EventRoute() {
     // references
     const { eventId } = useParams<{ eventId: string }>();
@@ -124,7 +205,6 @@ export default function EventRoute() {
         setEventData((prev) => {
             // copy state
             const newState = prev!.createCopy();
-
             // first check if adding or not
             if (add) {
                 // only add if timeslot doesnt exist
@@ -149,7 +229,6 @@ export default function EventRoute() {
                         }
                     );
             }
-
             // return to update stae
             return newState;
         });
@@ -159,6 +238,10 @@ export default function EventRoute() {
         <main className="root-event-route">
             <p>When are you free for:</p>
             <h1>{eventData.eventName}</h1>
+            {/* todo most free display */}
+            <MostFreeDateDisplay eventData={eventData} />
+            {/* buttons */}
+            <button className="button-green fillWidth">Share</button>
             <button
                 className="button fillWidth"
                 onClick={() => {
@@ -167,9 +250,11 @@ export default function EventRoute() {
             >
                 Event Settings
             </button>
-            {/* todo most free display */}
             {/* tooltip */}
-            <Tooltip>Add your name and mark when you are available</Tooltip>
+            <Tooltip>
+                Scroll through the dates and roughly mark when you are free. You
+                can decide the actual timings later.
+            </Tooltip>
             {/* table */}
             <AvailabilityDisplay
                 eventData={eventData}

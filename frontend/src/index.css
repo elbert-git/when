@@ -175,6 +175,7 @@ body {
     border-radius: 0.5rem;
     gap: 1rem;
     padding: 1rem;
+    width: 100%;
 }
 
 .button {
@@ -214,6 +215,64 @@ body {
     border: solid 1px var(--red);
     border-radius: 0.25rem;
     transition: 0.3s;
+}
+.date-icon {
+    background-color: white;
+    border-radius: 0.5rem;
+    height: 5rem;
+    width: 5rem;
+    overflow: hidden;
+}
+.date-icon .month {
+    text-transform: uppercase;
+    background-color: #ff6060;
+    color: white;
+    font-weight: 700;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.date-icon .day {
+    font-size: 2.5rem;
+    font-weight: 900;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    top: -0.1rem;
+}
+
+.date-icon .day-name {
+    font-size: 0.8rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    top: -0.5rem;
+    /* font-size: 3rem;
+    font-weight: 900;
+    display: flex;
+    justify-content: center;
+    align-items: center; */
+}
+
+/* ------------------------------------------------------------------- event page */
+
+.most-free-display {
+    background-color: var(--light-grey);
+    display: flex;
+    padding: 1rem;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+    border-radius: 0.5rem;
+}
+.most-free-display .header {
+    font-weight: 600;
+}
+
+.root-event-route .button {
+    font-size: 1.2rem;
+    font-weight: 700;
 }
 
 /* ------------------------------------------------------------------- availability table */
@@ -283,8 +342,15 @@ table {
     font-size: 0.8rem;
     display: flex;
     justify-content: center;
-    gap: 0.5rem;
+    /* gap: 0.5rem; */
     font-weight: 400;
+    padding: 0rem 0.5rem;
+}
+.availability-display .date-cell .time-slots div {
+    flex-grow: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .availability-display .checkbox-container {
@@ -300,6 +366,7 @@ table {
 .availability-display .name-cell {
     background-color: white;
     padding: 0.1rem;
+    padding-right: 0.5rem;
     text-align: right;
     font-weight: 700;
     z-index: 2;

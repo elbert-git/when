@@ -38,15 +38,11 @@ export default function DateCheckBox(props: {
         alignItems: "center",
         justifyContent: "center",
     };
-    const onCheckboxClicked = () => {
-        console.log(props.date, props.timeslot);
-    };
     return (
         <div
             className="date-checkbox interactive"
             style={containerStyle}
             onClick={() => {
-                console.log(`clicked ${props.date} ${props.timeslot}`);
                 // setChecked(!checked);
                 props.onAvailabilitiesUpdate(
                     props.memberIndex,
@@ -55,9 +51,7 @@ export default function DateCheckBox(props: {
                 );
             }}
         >
-            <div style={style} onClick={onCheckboxClicked}>
-                {timeslotToText[props.timeslot]}
-            </div>
+            <div style={style}>{timeslotToText[props.timeslot]}</div>
         </div>
     );
 }

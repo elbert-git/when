@@ -74,6 +74,11 @@ export default function EditRoute() {
             eventData!.endDate = (
                 document.getElementById("endDate") as HTMLInputElement
             ).value;
+            // prevent less than 2 members
+            if (eventData!.guests.all.length <= 1) {
+                setNameErrorLabel("You should put at least 2 names");
+                return;
+            }
             // prevent empty names
             const members = eventData!.guests.all;
             for (let index = 0; index < members.length; index++) {

@@ -54,6 +54,24 @@ export function monthNumberToString(num: number) {
     return mapping[num - 1];
 }
 
+export function monthNumberToStringShort(num: number) {
+    const mapping = [
+        "jan",
+        "feb",
+        "mar",
+        "apr",
+        "may",
+        "jun",
+        "jul",
+        "aug",
+        "sep",
+        "oct",
+        "nov",
+        "dec",
+    ];
+    return mapping[num - 1];
+}
+
 export function isDateTodayOrFuture(dateString: string): boolean {
     const inputDate = new Date(dateString);
     const today = new Date();
@@ -87,4 +105,46 @@ export function isEndDateWithinTwoWeeks(
         difference >= oneDayInMilliseconds &&
         difference <= fourteenDaysInMilliseconds
     );
+}
+
+export function formatDateToReadable(dateString: string): string {
+    const date = new Date(dateString);
+    const day = date.getDate();
+    const month = date.toLocaleString("en-US", { month: "long" });
+    const year = date.getFullYear();
+
+    let daySuffix: string;
+    if (day > 3 && day < 21) {
+        daySuffix = "th";
+    } else {
+        switch (day % 10) {
+            case 1:
+                daySuffix = "st";
+                break;
+            case 2:
+                daySuffix = "nd";
+                break;
+            case 3:
+                daySuffix = "rd";
+                break;
+            default:
+                daySuffix = "th";
+                break;
+        }
+    }
+
+    return `${day}${daySuffix} ${month} ${year}`;
+}
+
+export function dayNameToShort(dayname: string) {
+    const dict: { [index: string]: string } = {
+        monday: "mon",
+        tuesday: "tue",
+        wednesday: "wed",
+        thursday: "thu",
+        friday: "fri",
+        saturday: "sat",
+        sunday: "sun",
+    };
+    return dict[dayname.toLowerCase()];
 }
