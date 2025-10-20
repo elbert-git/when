@@ -158,14 +158,6 @@ body {
     transform: scale(0.9);
 }
 
-/* event page */
-.root-event-route h1 {
-    font-weight: 800;
-    border-left: 3px var(--red) solid;
-    padding-left: 1rem;
-    margin: 0.5rem 0rem 1rem 0rem;
-}
-
 /* ------------------------------------------------------------------- common components */
 
 /* tooltip */
@@ -256,7 +248,25 @@ body {
     align-items: center; */
 }
 
+.root-logo-header {
+    border: none;
+    margin-bottom: 0.5rem;
+}
+.root-logo-header div {
+    font-weight: 700;
+    font-size: 1.5rem;
+}
+
 /* ------------------------------------------------------------------- event page */
+/* event page */
+.root-event-route h1 {
+    font-weight: 800;
+    border-left: 3px var(--red) solid;
+    padding-left: 1rem;
+    margin: 0.5rem 0rem 1rem 0rem;
+    font-size: 2rem;
+    text-transform: capitalize;
+}
 
 .most-free-display {
     background-color: var(--light-grey);
@@ -273,6 +283,13 @@ body {
 .root-event-route .button {
     font-size: 1.2rem;
     font-weight: 700;
+}
+
+.root-event-route .button-green {
+    font-size: 1rem;
+}
+.root-event-route .button {
+    font-size: 1rem;
 }
 
 /* ------------------------------------------------------------------- availability table */

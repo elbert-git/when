@@ -1,4 +1,18 @@
-
-> share button copies and pulls up share api
+>>> making all text inputs inside of forms. 
+    > edit events
+    > event page
 
 > UI tweaks to make sizes better
+
+>>> creating the header
+    > quick sketch and ui mockup
+    > structure
+    > styling 
+    > js
+    > put in all pages
+
+>>> honme page
+    > quick sketch and ui mockup
+    > structure
+    > styling 
+    > js

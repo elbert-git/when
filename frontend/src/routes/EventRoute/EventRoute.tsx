@@ -10,6 +10,7 @@ import DateCheckBox from "./subComponents/DateCheckBox";
 import API from "../../api";
 import EventData, { Guest, tempData } from "../../EventData";
 import { DateIcon } from "../../commonComponents/DateIcon";
+import HeaderLogo from "../../commonComponents/HeaderLogo";
 
 export function AvailabilityDisplay(props: {
     eventData: EventData;
@@ -148,6 +149,7 @@ function MostFreeDateDisplay(props: { eventData: EventData }) {
     );
 
     // handling timeslot message
+    console.log(mostFreeDay);
     const timeslotToSentence = [
         "in the morning.",
         "in the afternoon period.",
@@ -156,6 +158,7 @@ function MostFreeDateDisplay(props: { eventData: EventData }) {
     const timeslotIndex = Number(
         mostFreeDay.timeslot[mostFreeDay.timeslot.length - 1]
     );
+    const majorityFree = mostFreeDay.count >= eventData.guests.all.length / 2;
     return (
         <div className="most-free-display">
             {/* date icon */}
@@ -234,14 +237,36 @@ export default function EventRoute() {
         });
     };
 
+    const onShareButtonClicked = async () => {
+        if (navigator.share) {
+            try {
+                await navigator.share({
+                    title: `When are you free for: ${eventData!.eventName}`,
+                    url: window.location.href,
+                });
+                console.log("Content shared successfully");
+            } catch (error) {
+                console.error("Error sharing:", error);
+            }
+        } else {
+            alert("Web Share API is not supported in your browser.");
+        }
+    };
+
     return eventData ? (
         <main className="root-event-route">
-            <p>When are you free for:</p>
+            <HeaderLogo />
+            <p>are you free for:</p>
             <h1>{eventData.eventName}</h1>
             {/* todo most free display */}
             <MostFreeDateDisplay eventData={eventData} />
             {/* buttons */}
-            <button className="button-green fillWidth">Share</button>
+            <button
+                className="button-green fillWidth"
+                onClick={onShareButtonClicked}
+            >
+                Share
+            </button>
             <button
                 className="button fillWidth"
                 onClick={() => {
