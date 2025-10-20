@@ -233,7 +233,6 @@ body {
     position: relative;
     top: -0.1rem;
 }
-
 .date-icon .day-name {
     font-size: 0.8rem;
     display: flex;
@@ -241,13 +240,7 @@ body {
     align-items: center;
     position: relative;
     top: -0.5rem;
-    /* font-size: 3rem;
-    font-weight: 900;
-    display: flex;
-    justify-content: center;
-    align-items: center; */
 }
-
 .root-logo-header {
     border: none;
     margin-bottom: 0.5rem;
@@ -267,14 +260,14 @@ body {
     font-size: 2rem;
     text-transform: capitalize;
 }
-
 .most-free-display {
-    background-color: var(--light-grey);
+    background-color: #c2ffc2;
     display: flex;
     padding: 1rem;
     gap: 0.5rem;
     margin-bottom: 0.5rem;
     border-radius: 0.5rem;
+    overflow: hidden;
 }
 .most-free-display .header {
     font-weight: 600;
@@ -286,9 +279,11 @@ body {
 }
 
 .root-event-route .button-green {
+    margin-top: 1.5rem;
     font-size: 1rem;
 }
 .root-event-route .button {
+    margin-top: 1rem;
     font-size: 1rem;
 }
 

@@ -159,8 +159,14 @@ function MostFreeDateDisplay(props: { eventData: EventData }) {
         mostFreeDay.timeslot[mostFreeDay.timeslot.length - 1]
     );
     const majorityFree = mostFreeDay.count >= eventData.guests.all.length / 2;
+    console.log("majority", majorityFree);
+    const style: React.CSSProperties = {
+        padding: majorityFree ? "1rem" : "0rem",
+        maxHeight: majorityFree ? "20rem" : "0rem",
+        transition: "0.3s",
+    };
     return (
-        <div className="most-free-display">
+        <div className="most-free-display" style={style}>
             {/* date icon */}
             <DateIcon
                 month={mostFreeDay.date.month}
@@ -260,6 +266,14 @@ export default function EventRoute() {
             <h1>{eventData.eventName}</h1>
             {/* todo most free display */}
             <MostFreeDateDisplay eventData={eventData} />
+            <Tooltip>
+                Scroll through the dates and tap when you are roughly free.
+                (Decide the actual timings later)
+            </Tooltip>
+            <AvailabilityDisplay
+                eventData={eventData}
+                onAvailabilitiesUpdate={onUpdateAvailabilities}
+            />
             {/* buttons */}
             <button
                 className="button-green fillWidth"
@@ -276,15 +290,7 @@ export default function EventRoute() {
                 Event Settings
             </button>
             {/* tooltip */}
-            <Tooltip>
-                Scroll through the dates and roughly mark when you are free. You
-                can decide the actual timings later.
-            </Tooltip>
             {/* table */}
-            <AvailabilityDisplay
-                eventData={eventData}
-                onAvailabilitiesUpdate={onUpdateAvailabilities}
-            />
         </main>
     ) : (
         "loading"

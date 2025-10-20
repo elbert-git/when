@@ -1,9 +1,3 @@
->>> making all text inputs inside of forms. 
-    > edit events
-    > event page
-
-> UI tweaks to make sizes better
-
 >>> creating the header
     > quick sketch and ui mockup
     > structure
@@ -11,8 +5,19 @@
     > js
     > put in all pages
 
->>> honme page
+>>> making all text inputs inside of forms. 
+    > edit events
+    > event page
+
+> UI tweaks to make sizes better
+
+>>> home page
     > quick sketch and ui mockup
     > structure
     > styling 
     > js
+
+
+--- others later
+- video gif
+- deployment
