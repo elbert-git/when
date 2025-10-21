@@ -3,13 +3,14 @@ import EventRoute from "./routes/EventRoute/EventRoute";
 import EditRoute from "./routes/editRoute/EditRoute";
 import NewRoute from "./routes/newRoute/NewRoute";
 import PasswordRoute from "./routes/passwordRoute/PasswordRoute";
+import HomeRoute from "./routes/homeRoute/HomeRoute";
 
 export default function App() {
     return (
         <div className="padding">
             <BrowserRouter>
                 <Routes>
-                    <Route path="/" element={<>root</>} />
+                    <Route path="/" element={<HomeRoute />} />
                     <Route path="/event/:eventId" element={<EventRoute />} />
                     <Route path="/edit/:eventId" element={<EditRoute />} />
                     <Route

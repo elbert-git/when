@@ -6,6 +6,7 @@ import EventData from "../../EventData";
 import { useNavigate } from "react-router-dom";
 import ErrorLabel from "../../commonComponents/ErrorLabel";
 import { isDateTodayOrFuture, isEndDateWithinTwoWeeks } from "../../utilities";
+import HeaderLogo from "../../commonComponents/HeaderLogo";
 
 function MemberRow(props: {
     name: string;
@@ -149,6 +150,7 @@ export default function EditRoute() {
 
     return eventData ? (
         <div className="root-edit-event">
+            <HeaderLogo />
             <RedHeader>
                 <h1>Event Settings</h1>
             </RedHeader>

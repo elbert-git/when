@@ -461,7 +461,7 @@ table {
     margin-top: 1rem;
 }
 
-/* Dropdown Menu Styles */
+/* ------------------------------------------------------------------- header logo drop down */
 .dropdown-menu {
     position: absolute;
     background-color: #f9f9f9;
@@ -482,4 +482,16 @@ table {
 
 .dropdown-item:hover {
     background-color: #f1f1f1;
+}
+
+/* ------------------------------------------------------------------- home page */
+.root-home-route {
+}
+.root-home-route p {
+    margin-top: 0.5rem;
+    text-align: center;
+}
+.root-home-route h5 {
+    margin-top: 1rem;
+    text-align: center;
 }
