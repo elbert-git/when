@@ -7,9 +7,11 @@ export default class Keychain {
     static init() {
         const raw = localStorage.getItem(Keychain.key);
         try {
+            if (raw == null || raw == "" || raw == undefined) {
+                throw "empty local storage";
+            }
             Keychain.cache = JSON.parse(raw as string);
         } catch (e) {
-            console.log("failed to load local storage", e);
             // create one
             Keychain.cache = {};
             // save cache
