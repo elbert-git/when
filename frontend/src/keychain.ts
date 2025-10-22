@@ -8,7 +8,8 @@ export default class Keychain {
         const raw = localStorage.getItem(Keychain.key);
         try {
             Keychain.cache = JSON.parse(raw as string);
-        } catch {
+        } catch (e) {
+            console.log("failed to load local storage", e);
             // create one
             Keychain.cache = {};
             // save cache
@@ -20,10 +21,11 @@ export default class Keychain {
         Keychain.writeCache();
     }
     static getToken(eventId: string) {
-        if (Object.keys(Keychain.cache).includes(eventId)) {
+        try {
             return Keychain.cache[eventId];
-        } else {
-            return "null";
+        } catch (e) {
+            console.log("failed to get key from keychain", e);
+            return null;
         }
     }
     static writeCache() {
