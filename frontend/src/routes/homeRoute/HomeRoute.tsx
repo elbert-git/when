@@ -7,7 +7,7 @@ export default function HomeRoute() {
         <div className="root-home-route">
             <HeaderLogo />
             <p>A hangout scheduling app to find when eveyone is free</p>
-            <video src="video.mp4" autoPlay loop></video>
+            <video src="video.mp4" autoPlay loop muted playsInline></video>
             <button
                 className="button-green"
                 onClick={() => {
