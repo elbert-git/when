@@ -1,7 +1,7 @@
 import Keychain from "./keychain";
 
 export default class API {
-    static url = "http://api.sowhen.app";
+    static url = "https://api.sowhen.app";
     static async getEventdata(eventId: string) {
         const res = await fetch(`${API.url}/getEvent/${eventId}`, {
             headers: {
