@@ -23,7 +23,7 @@ export default class Keychain {
         if (Object.keys(Keychain.cache).includes(eventId)) {
             return Keychain.cache[eventId];
         } else {
-            return null;
+            return "null";
         }
     }
     static writeCache() {

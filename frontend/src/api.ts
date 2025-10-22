@@ -45,7 +45,6 @@ export default class API {
             }),
         });
         const resJson = await res.json();
-        console.log(resJson);
         if (res.status === 200) {
             Keychain.registerToken(eventId, resJson.token);
         }
