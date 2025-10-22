@@ -63,6 +63,7 @@ export default function createServer() {
     expressApp.use(bodyParser.json());
     const allowedOrigins = [
         "http://chippy:3012",
+        "http://localhost:5173",
         "https://sowhen.app",
         "https://www.sowhen.app",
     ];
