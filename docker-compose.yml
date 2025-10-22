@@ -1,0 +1,50 @@
+version: "3.8"
+
+services:
+    pocketbase:
+        build:
+            context: ./pocketbase
+            dockerfile: Dockerfile
+        restart: always
+        ports:
+            - "3010:8090"
+        volumes:
+            # uncomment when you go to production
+            - ./pocketbase/pb_data:/pb/pb_data # this holds all the rows
+            - ./pocketbase/pb_migrations:/pb/pb_migrations # this holds database schemas
+
+    backend:
+        build:
+            context: ./backend
+            dockerfile: Dockerfile
+        container_name: backend
+        restart: unless-stopped
+        ports:
+            - "3011:3000" # Assuming backend runs on port 3000
+        volumes:
+            - ./backend:/app
+            - /app/node_modules # Exclude node_modules from host mount
+        depends_on:
+            - pocketbase
+        env_file:
+            - ./backend/.env
+        environment:
+            NODE_ENV: development
+            POCKETBASE_URL: http://pocketbase:8090 # Internal Docker network hostname
+
+    frontend:
+        build:
+            context: ./frontend
+            dockerfile: Dockerfile
+        container_name: frontend
+        restart: unless-stopped
+        ports:
+            - "3012:5173" # Assuming frontend (Vite) runs on port 5173
+        volumes:
+            - ./frontend:/app
+            - /app/node_modules # Exclude node_modules from host mount
+        depends_on:
+            - backend
+        # environment:
+        # VITE_BACKEND_URL: http://localhost:3000 # For local development, adjust if deploying
+        # VITE_POCKETBASE_URL: http://localhost:8090 # For local development, adjust if deploying

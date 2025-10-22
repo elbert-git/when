@@ -1,7 +1,4 @@
-import React, { useState } from "react";
-
-const normalSize = "2.5rem";
-const smallSize = "2rem";
+import React from "react";
 
 const containerStyle: React.CSSProperties = {
     height: "2.5rem",

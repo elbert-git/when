@@ -1,7 +1,4 @@
-export default function SettingsDrawer(props: {
-    slideUp: boolean;
-    setSlideUp: Function;
-}) {
+export default function SettingsDrawer() {
     <div className="root-settings-drawer">
         <div className="slider">
             <div className="card">

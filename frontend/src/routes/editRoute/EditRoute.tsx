@@ -5,7 +5,7 @@ import { ImCross } from "react-icons/im";
 import EventData from "../../EventData";
 import { useNavigate } from "react-router-dom";
 import ErrorLabel from "../../commonComponents/ErrorLabel";
-import { isDateTodayOrFuture, isEndDateWithinTwoWeeks } from "../../utilities";
+import { isEndDateWithinTwoWeeks } from "../../utilities";
 import HeaderLogo from "../../commonComponents/HeaderLogo";
 
 function MemberRow(props: {
@@ -112,6 +112,7 @@ export default function EditRoute() {
         const newEventData = eventData!.createCopy();
         // remove by index
         newEventData.guests.all = newEventData.guests.all.filter((e, i) => {
+            e;
             return i != index;
         });
         // set new state

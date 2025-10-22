@@ -7,8 +7,7 @@ import {
     monthNumberToString,
 } from "../../utilities";
 import DateCheckBox from "./subComponents/DateCheckBox";
-import API from "../../api";
-import EventData, { Guest, tempData } from "../../EventData";
+import EventData from "../../EventData";
 import { DateIcon } from "../../commonComponents/DateIcon";
 import HeaderLogo from "../../commonComponents/HeaderLogo";
 

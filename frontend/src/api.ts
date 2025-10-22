@@ -1,7 +1,7 @@
 import Keychain from "./keychain";
 
 export default class API {
-    static url = "http://localhost:3000";
+    static url = "http://api.sowhen.app";
     static async getEventdata(eventId: string) {
         const res = await fetch(`${API.url}/getEvent/${eventId}`, {
             headers: {
@@ -14,7 +14,7 @@ export default class API {
         return await res.json();
     }
     static async updateEventDate(data: any) {
-        const res = await fetch(`${API.url}/updateEvent/${data.id}`, {
+        await fetch(`${API.url}/updateEvent/${data.id}`, {
             method: "POST",
             headers: {
                 Authorization: `Bearer ${Keychain.getToken(data.id)}`,
