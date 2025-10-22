@@ -6,8 +6,8 @@ export default function HomeRoute() {
     return (
         <div className="root-home-route">
             <HeaderLogo />
-            <p>An event scheduling app to find when eveyone is free</p>
-            <video src=""></video>
+            <p>A hangout scheduling app to find when eveyone is free</p>
+            <video src="video.mp4" autoPlay loop></video>
             <button
                 className="button-green"
                 onClick={() => {
@@ -17,23 +17,24 @@ export default function HomeRoute() {
                 Schedule An Event
             </button>
             <p>
-                For scheduling with your busy friends. Especially that one
-                friend keeps shooting every date down
+                Made especially for that one friend in your group who shoots
+                down every available date.
             </p>
             <h5>No Registeration Needed</h5>
             <p>
-                This app is made to quickly poll your friends so you can get to
-                hanging out as quickly as possible. You may wish to password
-                protect your events but there are no registrations or logins
-                etc.
+                This app aims to quickly get out of the way. You can simply
+                create the event. Share the polling link to everyone and quickly
+                reach a consensus. No registeration or accounts needed. Though
+                you may password-protect your events for privacy.
             </p>
-            <h5>How was this made?</h5>
+            {/* // todo uncomment this when you finish the video blog */}
+            {/* <h5>How was this made?</h5>
             <video src=""></video>
             <p>
                 This app was made after frustration of wrangling friends to hang
                 out with each other. Originally scoped for 2 weekends became a 5
                 week project that I glad I finished
-            </p>
+            </p> */}
         </div>
     );
 }
