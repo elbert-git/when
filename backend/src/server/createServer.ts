@@ -61,7 +61,24 @@ export default function createServer() {
     const expressApp = express();
     // handle middleware
     expressApp.use(bodyParser.json());
-    expressApp.use(cors());
+    const allowedOrigins = [
+        "http://chippy:3012",
+        "https://sowhen.app",
+        "https://www.sowhen.app",
+    ];
+    expressApp.use(
+        cors({
+            origin: function (origin, callback) {
+                if (!origin) return callback(null, true);
+                if (allowedOrigins.indexOf(origin) === -1) {
+                    const msg =
+                        "The CORS policy for this site does not allow access from the specified Origin.";
+                    return callback(new Error(msg), false);
+                }
+                return callback(null, true);
+            },
+        })
+    );
     // * --- --- --- --- protected routes
     expressApp.get("/getEvent/:eventId", authMiddleware, async (req, res) => {
         // get param
