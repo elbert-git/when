@@ -254,7 +254,9 @@ export default function EventRoute() {
                 console.error("Error sharing:", error);
             }
         } else {
-            alert("Web Share API is not supported in your browser.");
+            alert(
+                "Web Share API is not supported in your browser. Please just share the URL and password to your friends"
+            );
         }
     };
 
