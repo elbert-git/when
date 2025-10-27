@@ -2,8 +2,6 @@ import express from "express";
 import cors from "cors";
 import { NextFunction, Response, Request } from "express";
 import bodyParser from "body-parser";
-import Auth from "../auth";
-import userRoutes from "./routes/usersRoutes";
 import { getPB } from "../pb";
 import { dateToString, getDateTwoWeeksLater } from "../utilities";
 import jwt from "jsonwebtoken";
@@ -130,7 +128,7 @@ export default function createServer() {
             // construct a new data
             const data = {
                 event_name: req.body.eventName,
-                start_date: req.body.startData,
+                start_date: req.body.startDate,
                 end_date: req.body.endDate,
                 event_password: req.body.eventPassword,
                 guests: req.body.guests,
