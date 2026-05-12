@@ -1,8 +1,28 @@
+import { io, Socket } from "socket.io-client";
 import Keychain from "./keychain";
 
+export class SocketConnection {
+    url;
+    socket: Socket;
+    constructor(url: string, eventId: string, authToken?: string) {
+        // connect
+        this.url = url;
+        this.socket = io(this.url, {
+            auth: { token: authToken },
+            query: { eventId },
+        });
+        this.socket.on("message", (payload) => {
+            console.log("received message", payload);
+        });
+    }
+    disconnect() {
+        this.socket.disconnect();
+    }
+}
+
 export default class API {
-    static url = "https://api.sowhen.app";
-    // static url = "http://localhost:3000";
+    // static url = "https://api.sowhen.app";
+    static url = "http://localhost:3000";
     static async getEventdata(eventId: string) {
         const res = await fetch(`${API.url}/getEvent/${eventId}`, {
             headers: {

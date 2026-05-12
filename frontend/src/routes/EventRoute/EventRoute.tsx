@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import Tooltip from "./subComponents/Tooltip";
 import {
@@ -10,6 +10,28 @@ import DateCheckBox from "./subComponents/DateCheckBox";
 import EventData from "../../EventData";
 import { DateIcon } from "../../commonComponents/DateIcon";
 import HeaderLogo from "../../commonComponents/HeaderLogo";
+import { SocketConnection } from "../../api";
+import Keychain from "../../keychain";
+
+function useSocketConnection(url: string, eventId: string, authToken?: string) {
+    const websocketRef = useRef<SocketConnection | null>(null);
+    useEffect(() => {
+        // on start
+        websocketRef.current = new SocketConnection(
+            "ws://localhost:3000",
+            eventId,
+            authToken,
+        );
+        // on leave
+        return () => {
+            console.log("should disconnect");
+            if (websocketRef.current) {
+                websocketRef.current.disconnect();
+            }
+        };
+    }, []);
+    return websocketRef;
+}
 
 export function AvailabilityDisplay(props: {
     eventData: EventData;
@@ -58,7 +80,7 @@ export function AvailabilityDisplay(props: {
                                                 <DateCheckBox
                                                     memberIndex={memberIndex}
                                                     checked={existingTimeslots.includes(
-                                                        `${currentDate}-${0}`
+                                                        `${currentDate}-${0}`,
                                                     )}
                                                     date={currentDate}
                                                     timeslot={0}
@@ -69,7 +91,7 @@ export function AvailabilityDisplay(props: {
                                                 <DateCheckBox
                                                     memberIndex={memberIndex}
                                                     checked={existingTimeslots.includes(
-                                                        `${currentDate}-${1}`
+                                                        `${currentDate}-${1}`,
                                                     )}
                                                     date={currentDate}
                                                     onAvailabilitiesUpdate={
@@ -80,7 +102,7 @@ export function AvailabilityDisplay(props: {
                                                 <DateCheckBox
                                                     memberIndex={memberIndex}
                                                     checked={existingTimeslots.includes(
-                                                        `${currentDate}-${2}`
+                                                        `${currentDate}-${2}`,
                                                     )}
                                                     date={currentDate}
                                                     onAvailabilitiesUpdate={
@@ -106,7 +128,7 @@ function MostFreeDateDisplay(props: { eventData: EventData }) {
     const eventData = props.eventData;
     const daysInBetween = getDaysBetween(
         props.eventData.startDate,
-        props.eventData.endDate
+        props.eventData.endDate,
     );
     const allTimeslots: Array<any> = [];
     daysInBetween.forEach((e) => {
@@ -144,21 +166,19 @@ function MostFreeDateDisplay(props: { eventData: EventData }) {
     }
     const everyoneIsFree = mostFreeDay.count >= eventData.guests.all.length;
     const readableDate = formatDateToReadable(
-        `${mostFreeDay.date.year}-${mostFreeDay.date.month}-${mostFreeDay.date.day}`
+        `${mostFreeDay.date.year}-${mostFreeDay.date.month}-${mostFreeDay.date.day}`,
     );
 
     // handling timeslot message
-    console.log(mostFreeDay);
     const timeslotToSentence = [
         "in the morning.",
         "in the afternoon period.",
         "at evening or nightime.",
     ];
     const timeslotIndex = Number(
-        mostFreeDay.timeslot[mostFreeDay.timeslot.length - 1]
+        mostFreeDay.timeslot[mostFreeDay.timeslot.length - 1],
     );
     const majorityFree = mostFreeDay.count >= eventData.guests.all.length / 2;
-    console.log("majority", majorityFree);
     const style: React.CSSProperties = {
         padding: majorityFree ? "1rem" : "0rem",
         maxHeight: majorityFree ? "20rem" : "0rem",
@@ -190,6 +210,11 @@ export default function EventRoute() {
     const { eventId } = useParams<{ eventId: string }>();
     const nav = useNavigate();
     const [eventData, setEventData] = useState<EventData | null>();
+    const webSocket = useSocketConnection(
+        "ws://localhost:3000",
+        eventId!,
+        Keychain.getToken(eventId!)!,
+    );
 
     // on load
     useEffect(() => {
@@ -208,7 +233,7 @@ export default function EventRoute() {
     const onUpdateAvailabilities = async (
         memberIndex: number,
         timeslot: string,
-        add: boolean
+        add: boolean,
     ) => {
         setEventData((prev) => {
             // copy state
@@ -218,12 +243,12 @@ export default function EventRoute() {
                 // only add if timeslot doesnt exist
                 if (
                     newState.guests.all[memberIndex].availabilities.includes(
-                        timeslot
+                        timeslot,
                     ) === false
                 ) {
                     // add availabilities
                     newState.guests.all[memberIndex].availabilities.push(
-                        timeslot
+                        timeslot,
                     );
                     // write to database
                     newState.writeToDatabase();
@@ -234,7 +259,7 @@ export default function EventRoute() {
                     newState.guests.all[memberIndex].availabilities.filter(
                         (s) => {
                             return s !== timeslot;
-                        }
+                        },
                     );
             }
             // return to update stae
@@ -249,13 +274,12 @@ export default function EventRoute() {
                     title: `When are you free for: ${eventData!.eventName}`,
                     url: window.location.href,
                 });
-                console.log("Content shared successfully");
             } catch (error) {
                 console.error("Error sharing:", error);
             }
         } else {
             alert(
-                "Web Share API is not supported in your browser. Please just share the URL and password to your friends"
+                "Web Share API is not supported in your browser. Please just share the URL and password to your friends",
             );
         }
     };

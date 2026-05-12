@@ -1,17 +1,19 @@
 import express from "express";
 import cors from "cors";
+import * as http from "http";
 import { NextFunction, Response, Request } from "express";
 import bodyParser from "body-parser";
 import { getPB } from "../pb";
 import { dateToString, getDateTwoWeeksLater } from "../utilities";
 import jwt from "jsonwebtoken";
 import config from "../dotenv";
+import * as socketio from "socket.io";
 
 export function errorHandlingMiddleware(
     err: any,
     req: Request,
     res: Response,
-    next: NextFunction
+    next: NextFunction,
 ) {
     console.error(err);
     res.status(500).json({ message: "Encountered Error" });
@@ -19,7 +21,7 @@ export function errorHandlingMiddleware(
 const authMiddleware = async (
     req: Request,
     res: Response,
-    next: NextFunction
+    next: NextFunction,
 ) => {
     const eventId = req.params.eventId;
     const pb = await getPB();
@@ -31,7 +33,7 @@ const authMiddleware = async (
             .getFirstListItem(`event_id = "${eventId}"`, {});
     } catch (e) {
         console.log(
-            "failed to get active token record; Probably does not exist"
+            "failed to get active token record; Probably does not exist",
         );
     }
     // check if there is an active token to check against
@@ -76,8 +78,59 @@ export default function createServer() {
                 }
                 return callback(null, true);
             },
-        })
+        }),
     );
+    // * --- --- --- --- websockets
+    // create io and server
+    const httpServer = http.createServer(expressApp);
+    const io = new socketio.Server(httpServer, {
+        cors: { origin: allowedOrigins },
+    });
+    // setup websocket auth middleware
+    io.use(async (socketio, next) => {
+        // get auth params
+        const authToken = socketio.handshake.auth.token;
+        const eventId = socketio.handshake.query.eventId;
+        // get active token if it exists
+        const pb = await getPB()!;
+        let activeToken = null;
+        try {
+            activeToken = await pb!
+                .collection("active_tokens")
+                .getFirstListItem(`event_id = "${eventId}"`, {});
+        } catch (e) {
+            // no active token must be an unprotected event
+            // just proceed as normal
+            return next();
+        }
+        // handle missing auth token
+        if (!authToken) {
+            return next(new Error("missing auth token"));
+        }
+        // check auth token
+        try {
+            const decoded = jwt.verify(authToken, config.secret);
+            const isActive = authToken === activeToken.token;
+            if (!isActive) {
+                return next(new Error("token is inactive"));
+            }
+            return next();
+        } catch (e) {
+            console.log("failed to verify token", e);
+            next(new Error("invalid token"));
+        }
+    });
+    // handle connections
+    io.on("connection", (socket) => {
+        console.log("A connection is made");
+        socket.on("message", (payload) => {
+            console.log("received message from client", payload);
+            io.emit("message", payload);
+        });
+        socket.on("disconnect", () => {
+            console.log("socket has disconnected");
+        });
+    });
     // * --- --- --- --- protected routes
     expressApp.get("/getEvent/:eventId", authMiddleware, async (req, res) => {
         // get param
@@ -106,14 +159,14 @@ export default function createServer() {
                     await pb!.collection("active_tokens").delete(record.id);
                 } catch (e) {
                     console.log(
-                        "failed to delete active token. most like token doesnt exist"
+                        "failed to delete active token. most like token doesnt exist",
                     );
                 }
                 // if new password is not blank... then create a new active token and save it
                 if (req.body.eventPassword != "") {
                     const accessToken = jwt.sign(
                         { eventId: req.body.event_id, timestamp: Date.now() },
-                        config.secret
+                        config.secret,
                     );
                     const data = {
                         token: accessToken,
@@ -141,7 +194,7 @@ export default function createServer() {
             res.status(200).json({
                 message: `updated event: ${record.id}`,
             });
-        }
+        },
     );
     // * --- --- --- --- public routes
     expressApp.get("/createEvent", async (req, res) => {
@@ -194,5 +247,5 @@ export default function createServer() {
     // handle error middle wares
     expressApp.use(errorHandlingMiddleware);
     // return app
-    return expressApp;
+    return httpServer;
 }

@@ -1,4 +1,9 @@
---- others later
-- deployment
+--- connection indicator
 
+--- only each room can hear the broadcast
 
+--- the toggle system refactor
+
+--- broadcast toggles to each other
+
+--- redeployment
