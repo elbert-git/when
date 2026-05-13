@@ -8,6 +8,14 @@ import { dateToString, getDateTwoWeeksLater } from "../utilities";
 import jwt from "jsonwebtoken";
 import config from "../dotenv";
 import * as socketio from "socket.io";
+import { Socket } from "dgram";
+import { RecordModel } from "pocketbase";
+
+declare module "socket.io" {
+    interface Socket {
+        eventId: string;
+    }
+}
 
 export function errorHandlingMiddleware(
     err: any,
@@ -91,8 +99,22 @@ export default function createServer() {
         // get auth params
         const authToken = socketio.handshake.auth.token;
         const eventId = socketio.handshake.query.eventId;
-        // get active token if it exists
+        // check if event id is valid
         const pb = await getPB()!;
+        let eventRecord: RecordModel | null = null;
+        try {
+            eventRecord = await pb!
+                .collection("events")
+                .getOne(eventId as string, {});
+        } catch (e) {
+            next(new Error("failed to get event id"));
+        }
+        if (eventRecord == null) {
+            next(new Error("failed to get event id"));
+        }
+        // attach event id to socket
+        socketio.eventId = eventId as string;
+        // get active token if it exists
         let activeToken = null;
         try {
             activeToken = await pb!
@@ -123,12 +145,53 @@ export default function createServer() {
     // handle connections
     io.on("connection", (socket) => {
         console.log("A connection is made");
+        // join event room
+        socket.join(socket.eventId);
+        // on message echo to room
         socket.on("message", (payload) => {
             console.log("received message from client", payload);
-            io.emit("message", payload);
+            socket.to(socket.eventId).emit("message", payload);
         });
+        // handle disconnect
         socket.on("disconnect", () => {
             console.log("socket has disconnected");
+        });
+        // handle update avails
+        socket.on("updateAvailabilites", async (payload) => {
+            try {
+                console.log("recieved update", payload);
+                // broadcast
+                socket.to(socket.eventId).emit("updateAvailabilites", payload);
+                // get event id
+                const pb = await getPB();
+                const eventRecord = await pb!
+                    .collection("events")
+                    .getOne(socket.eventId as string, {});
+                console.log(typeof eventRecord.guests);
+                // mutate it
+                if (payload.add) {
+                    // add it
+                    eventRecord.guests.all[
+                        payload.memberIndex
+                    ].availabilities.push(payload.timeslot);
+                } else {
+                    // removing it
+                    // remove the item
+                    eventRecord.guests.all[payload.memberIndex].availabilities =
+                        eventRecord.guests.all[
+                            payload.memberIndex
+                        ].availabilities.filter((item: string) => {
+                            return item !== payload.timeslot;
+                        });
+                }
+                // write it
+                const guestsData = eventRecord.guests;
+                await pb!
+                    .collection("events")
+                    .update(socket.eventId, { guests: guestsData });
+            } catch (e) {
+                console.log("error when updating avails", e);
+            }
         });
     });
     // * --- --- --- --- protected routes

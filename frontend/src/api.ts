@@ -11,12 +11,32 @@ export class SocketConnection {
             auth: { token: authToken },
             query: { eventId },
         });
+        this.socket.on("connect", () => {
+            const connectEvent = new CustomEvent("websocket_connected");
+            window.dispatchEvent(connectEvent);
+        });
+        this.socket.on("disconnect", () => {
+            const disconnectEvent = new CustomEvent("websocket_disconnected");
+            window.dispatchEvent(disconnectEvent);
+        });
         this.socket.on("message", (payload) => {
             console.log("received message", payload);
+        });
+        this.socket.on("updateAvailabilites", (payload) => {
+            console.log("received update", payload);
+            const event = new CustomEvent("updateAvailabilites", payload);
+            window.dispatchEvent(event);
         });
     }
     disconnect() {
         this.socket.disconnect();
+    }
+    broadcastUpdateAvailabilities(
+        memberIndex: number,
+        timeslot: string,
+        add: boolean,
+    ) {
+        this.socket.emit("updateAvailabilites", { memberIndex, timeslot, add });
     }
 }
 

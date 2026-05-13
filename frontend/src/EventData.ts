@@ -58,7 +58,8 @@ export default class EventData {
         return data as EventData;
     }
     async writeToDatabase() {
-        await API.updateEventDate(this.toJson());
+        console.warn("write to database disabled");
+        // await API.updateEventDate(this.toJson());
     }
     toJson() {
         return {

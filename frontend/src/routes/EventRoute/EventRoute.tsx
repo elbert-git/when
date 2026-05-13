@@ -13,6 +13,7 @@ import HeaderLogo from "../../commonComponents/HeaderLogo";
 import { SocketConnection } from "../../api";
 import Keychain from "../../keychain";
 
+// * --- --- --- hooks
 function useSocketConnection(url: string, eventId: string, authToken?: string) {
     const websocketRef = useRef<SocketConnection | null>(null);
     useEffect(() => {
@@ -24,7 +25,6 @@ function useSocketConnection(url: string, eventId: string, authToken?: string) {
         );
         // on leave
         return () => {
-            console.log("should disconnect");
             if (websocketRef.current) {
                 websocketRef.current.disconnect();
             }
@@ -33,6 +33,40 @@ function useSocketConnection(url: string, eventId: string, authToken?: string) {
     return websocketRef;
 }
 
+// * --- --- --- subcomponents
+export function WebSocketConnectionIndicator() {
+    const [connected, setConnected] = useState(true);
+    useEffect(() => {
+        const handleConnect = () => {
+            setConnected(true);
+        };
+        const handleDisconnect = () => {
+            setConnected(false);
+        };
+        window.addEventListener("websocket_connected", handleConnect);
+        window.addEventListener("websocket_disconnected", handleDisconnect);
+        return () => {
+            window.removeEventListener("websocket_connected", handleConnect);
+            window.removeEventListener(
+                "websocket_disconnected",
+                handleDisconnect,
+            );
+        };
+    }, []);
+    const style = {
+        top: connected ? "-50%" : "0%",
+        transition: "0.3s",
+        animationTimingFunction: "cubic-bezier(.01,.99,.01,.99)",
+    };
+    return (
+        <div style={style} className="root-websocket-indicator">
+            <div className="pill">
+                <div className="circle"></div>
+                <span>{connected ? "" : "Reconnecting"}</span>
+            </div>
+        </div>
+    );
+}
 export function AvailabilityDisplay(props: {
     eventData: EventData;
     onAvailabilitiesUpdate: Function;
@@ -235,6 +269,14 @@ export default function EventRoute() {
         timeslot: string,
         add: boolean,
     ) => {
+        console.log("updaing avail", { memberIndex, timeslot, add });
+        // broadcast
+        webSocket.current?.broadcastUpdateAvailabilities(
+            memberIndex,
+            timeslot,
+            add,
+        );
+        // update state
         setEventData((prev) => {
             // copy state
             const newState = prev!.createCopy();
@@ -316,6 +358,8 @@ export default function EventRoute() {
             </button>
             {/* tooltip */}
             {/* table */}
+            {/* connection indicator */}
+            <WebSocketConnectionIndicator />
         </main>
     ) : (
         "loading"

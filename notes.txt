@@ -1,8 +1,11 @@
---- connection indicator
-
---- only each room can hear the broadcast
-
 --- the toggle system refactor
+    > disable sending api call on button press
+    > buttons send info and update local state
+    > server receives button payload
+    ---
+    > server processes and toggles
+        > create a toggle function to the database
+
 
 --- broadcast toggles to each other
 
