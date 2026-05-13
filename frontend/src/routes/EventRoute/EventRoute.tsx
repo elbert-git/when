@@ -19,7 +19,7 @@ function useSocketConnection(url: string, eventId: string, authToken?: string) {
     useEffect(() => {
         // on start
         websocketRef.current = new SocketConnection(
-            "ws://localhost:3000",
+            "wss://api.sowhen.app",
             eventId,
             authToken,
         );
