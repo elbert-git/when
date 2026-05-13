@@ -18,11 +18,7 @@ function useSocketConnection(url: string, eventId: string, authToken?: string) {
     const websocketRef = useRef<SocketConnection | null>(null);
     useEffect(() => {
         // on start
-        websocketRef.current = new SocketConnection(
-            "wss://api.sowhen.app",
-            eventId,
-            authToken,
-        );
+        websocketRef.current = new SocketConnection(url, eventId, authToken);
         // on leave
         return () => {
             if (websocketRef.current) {
@@ -245,7 +241,7 @@ export default function EventRoute() {
     const nav = useNavigate();
     const [eventData, setEventData] = useState<EventData | null>();
     const webSocket = useSocketConnection(
-        "ws://localhost:3000",
+        "wss://api.sowhen.app",
         eventId!,
         Keychain.getToken(eventId!)!,
     );

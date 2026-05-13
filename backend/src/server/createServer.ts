@@ -255,6 +255,9 @@ export default function createServer() {
         },
     );
     // * --- --- --- --- public routes
+    expressApp.get("/", async (req, res) => {
+        res.status(200).json({ message: "okay" });
+    });
     expressApp.get("/createEvent", async (req, res) => {
         const pb = await getPB();
         const data = {
