@@ -23,8 +23,9 @@ export class SocketConnection {
             console.log("received message", payload);
         });
         this.socket.on("updateAvailabilites", (payload) => {
-            console.log("received update", payload);
-            const event = new CustomEvent("updateAvailabilites", payload);
+            const event = new CustomEvent("updateAvailabilites", {
+                detail: payload,
+            });
             window.dispatchEvent(event);
         });
     }

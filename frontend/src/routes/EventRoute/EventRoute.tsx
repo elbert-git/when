@@ -250,26 +250,12 @@ export default function EventRoute() {
         Keychain.getToken(eventId!)!,
     );
 
-    // on load
-    useEffect(() => {
-        const load = async () => {
-            const eventData = await EventData.pullFromApi(eventId!);
-            if (eventData) {
-                setEventData(eventData as EventData);
-            } else {
-                nav(`/password/${eventId}`);
-            }
-        };
-        load();
-    }, []);
-
     // update availabilities
     const onUpdateAvailabilities = async (
         memberIndex: number,
         timeslot: string,
         add: boolean,
     ) => {
-        console.log("updaing avail", { memberIndex, timeslot, add });
         // broadcast
         webSocket.current?.broadcastUpdateAvailabilities(
             memberIndex,
@@ -280,30 +266,7 @@ export default function EventRoute() {
         setEventData((prev) => {
             // copy state
             const newState = prev!.createCopy();
-            // first check if adding or not
-            if (add) {
-                // only add if timeslot doesnt exist
-                if (
-                    newState.guests.all[memberIndex].availabilities.includes(
-                        timeslot,
-                    ) === false
-                ) {
-                    // add availabilities
-                    newState.guests.all[memberIndex].availabilities.push(
-                        timeslot,
-                    );
-                    // write to database
-                    newState.writeToDatabase();
-                }
-            } else {
-                // removing
-                newState.guests.all[memberIndex].availabilities =
-                    newState.guests.all[memberIndex].availabilities.filter(
-                        (s) => {
-                            return s !== timeslot;
-                        },
-                    );
-            }
+            newState.updateAvailabilities(memberIndex, timeslot, add);
             // return to update stae
             return newState;
         });
@@ -325,6 +288,39 @@ export default function EventRoute() {
             );
         }
     };
+
+    // on load
+    useEffect(() => {
+        // load
+        const load = async () => {
+            const eventData = await EventData.pullFromApi(eventId!);
+            if (eventData) {
+                setEventData(eventData as EventData);
+            } else {
+                nav(`/password/${eventId}`);
+            }
+        };
+        load();
+        // handle on websocket update
+        const eventHandler = (e: Event | any) => {
+            // update state
+            setEventData((prev) => {
+                // copy state
+                const newState = prev!.createCopy();
+                newState.updateAvailabilities(
+                    e.detail.memberIndex,
+                    e.detail.timeslot,
+                    e.detail.add,
+                );
+                // return to update stae
+                return newState;
+            });
+        };
+        window.addEventListener("updateAvailabilites", eventHandler);
+        return () => {
+            window.removeEventListener("updateAvailabilities", eventHandler);
+        };
+    }, []);
 
     return eventData ? (
         <main className="root-event-route">

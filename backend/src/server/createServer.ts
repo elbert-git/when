@@ -144,7 +144,6 @@ export default function createServer() {
     });
     // handle connections
     io.on("connection", (socket) => {
-        console.log("A connection is made");
         // join event room
         socket.join(socket.eventId);
         // on message echo to room
@@ -153,13 +152,10 @@ export default function createServer() {
             socket.to(socket.eventId).emit("message", payload);
         });
         // handle disconnect
-        socket.on("disconnect", () => {
-            console.log("socket has disconnected");
-        });
+        socket.on("disconnect", () => {});
         // handle update avails
         socket.on("updateAvailabilites", async (payload) => {
             try {
-                console.log("recieved update", payload);
                 // broadcast
                 socket.to(socket.eventId).emit("updateAvailabilites", payload);
                 // get event id
@@ -167,7 +163,6 @@ export default function createServer() {
                 const eventRecord = await pb!
                     .collection("events")
                     .getOne(socket.eventId as string, {});
-                console.log(typeof eventRecord.guests);
                 // mutate it
                 if (payload.add) {
                     // add it

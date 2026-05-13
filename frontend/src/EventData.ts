@@ -81,4 +81,13 @@ export default class EventData {
             guests: { ...this.guests },
         });
     }
+    updateAvailabilities(memberIndex: number, timeslot: string, add: boolean) {
+        if (add) {
+            this.guests.all[memberIndex].availabilities.push(timeslot);
+        } else {
+            this.guests.all[memberIndex].availabilities = this.guests.all[
+                memberIndex
+            ].availabilities.filter((item) => item !== timeslot);
+        }
+    }
 }
